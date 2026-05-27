@@ -1,0 +1,161 @@
+{
+  "config": {
+    "modelo_padrao": "medgemma:4b",
+    "modelos_disponiveis": {
+      "medgemma:4b": "Especializado em saude - melhor para prompts clinicos",
+      "gemma4:e2b": "Gemma 4 mais recente - melhor para produto/negocio"
+    },
+    "idioma": "pt-BR",
+    "dominio": "Saude Digital - Operadora de Saude"
+  },
+  "trilhas": {
+    "teleeletiva": {
+      "nome": "Teleconsulta Eletiva",
+      "cor": "#005DA0",
+      "descricao": "Consultas medicas agendadas realizadas por video ou chat, sem necessidade de presenca fisica.",
+      "desafios": [
+        {
+          "id": "TE-01",
+          "titulo": "Reduzir No-Show com IA",
+          "problema": "30% dos pacientes agendados nao comparecem a teleconsulta eletiva, gerando ociosidade medica e perda de acesso para outros pacientes.",
+          "metricas_alvo": ["taxa de no-show", "taxa de reagendamento", "tempo ocioso medico"],
+          "perguntas_guia": [
+            "Quais fatores mais influenciam o nao comparecimento?",
+            "Como a IA pode prever quem nao vai comparecer?",
+            "Que tipo de mensagem reduz o no-show sem irritar o paciente?"
+          ],
+          "prompts_exemplo": [
+            {
+              "nome": "Classificar risco de no-show",
+              "prompt": "Voce e um especialista em experiencia do paciente em telessaude. Analise o perfil abaixo e classifique o risco de nao comparecimento (alto/medio/baixo) com justificativa.\n\nPerfil do paciente:\n- Idade: 45 anos\n- Historico: 2 no-shows nos ultimos 6 meses\n- Tipo de consulta: Retorno cardiologista\n- Agendou com: 15 dias de antecedencia\n- Canal de contato preferido: WhatsApp\n\nClassifique o risco e sugira 3 acoes preventivas personalizadas."
+            },
+            {
+              "nome": "Gerar mensagem de lembrete personalizada",
+              "prompt": "Crie 3 versoes de mensagem de lembrete de teleconsulta para WhatsApp. Cada versao deve ter tom diferente (amigavel, formal, motivacional). A consulta e amanha as 14h com a Dra. Ana Silva (cardiologista). O paciente se chama Carlos, 52 anos, primeira vez na plataforma. Cada mensagem deve ter no maximo 3 linhas."
+            },
+            {
+              "nome": "Proposta de solucao completa",
+              "prompt": "Como gestor de produto em saude digital, proponha uma solucao de IA para reduzir no-show em teleconsulta eletiva. Estruture em: 1) Problema especifico, 2) Como a IA ajuda, 3) Dados necessarios, 4) Metrica de sucesso, 5) Risco assistencial a considerar. Seja objetivo e pratico."
+            }
+          ]
+        },
+        {
+          "id": "TE-02",
+          "titulo": "Triagem Inteligente de Sintomas",
+          "problema": "Pacientes sao direcionados ao especialista errado em 25% dos casos, gerando reencaminhamento, atraso no cuidado e desperdicio de consulta.",
+          "metricas_alvo": ["taxa de encaminhamento incorreto", "tempo ate consulta correta", "taxa de resolucao na primeira consulta"],
+          "perguntas_guia": [
+            "Como a IA pode entender a queixa principal e sugerir o especialista correto?",
+            "Que perguntas de triagem aumentam a precisao da classificacao?",
+            "Como equilibrar agilidade e seguranca clinica na triagem automatizada?"
+          ],
+          "prompts_exemplo": [
+            {
+              "nome": "Triagem de queixa clinica",
+              "prompt": "Voce e um assistente de triagem clinica em telessaude. Com base na queixa abaixo, identifique a especialidade mais indicada para a primeira consulta e justifique.\n\nQueixa do paciente: 'Tenho sentido dor nas costas ha 3 semanas, piora ao me abaixar, sem febre ou perda de peso. Ja tomei dipirona mas nao melhorou muito.'\n\nResponda: 1) Especialidade recomendada, 2) Especialidades a descartar, 3) 2 perguntas adicionais que ajudariam a refinar o diagnostico, 4) Nivel de urgencia (eletivo/prioritario/urgente)."
+            },
+            {
+              "nome": "Fluxo de perguntas de triagem",
+              "prompt": "Crie um fluxo de 5 perguntas sequenciais para triagem de paciente que relata 'cansaco e falta de ar'. O objetivo e determinar se o caso deve ser direcionado para teleconsulta eletiva, urgente, ou pronto atendimento digital. Para cada pergunta, indique o que a resposta 'sim' ou 'nao' sugere clinicamente."
+            }
+          ]
+        },
+        {
+          "id": "TE-03",
+          "titulo": "Plano de Cuidado Pos-Consulta com IA",
+          "problema": "40% dos pacientes nao seguem as orientacoes pos-teleconsulta por falta de clareza ou esquecimento, gerando reconsulta desnecessaria em curto prazo.",
+          "metricas_alvo": ["taxa de adesao ao cuidado", "taxa de reconsulta em 30 dias", "satisfacao do paciente"],
+          "perguntas_guia": [
+            "Como transformar o resumo medico em linguagem acessivel ao paciente?",
+            "Que tipo de lembrete aumenta adesao sem ser invasivo?",
+            "Como personalizar o plano de cuidado por perfil de paciente?"
+          ],
+          "prompts_exemplo": [
+            {
+              "nome": "Simplificar orientacao medica",
+              "prompt": "Transforme o texto medico abaixo em linguagem simples para um paciente com baixa escolaridade (nivel fundamental). Use frases curtas, evite termos tecnicos e inclua exemplos do dia a dia.\n\nTexto original: 'Prescrito losartana 50mg 1x ao dia em jejum para controle de hipertensao arterial sistemica. Recomendado reducao de ingesta de sodio para menos de 2g/dia e pratica de atividade fisica aerobica de intensidade moderada por 30 minutos, 5x por semana. Retorno em 30 dias para avaliacao de PA e ajuste terapeutico.'"
+            },
+            {
+              "nome": "Criar plano de cuidado semanal",
+              "prompt": "Crie um plano de cuidado semanal em formato de checklist para um paciente diabetico tipo 2 que acabou de ter sua primeira teleconsulta. O plano deve cobrir: medicamentos, alimentacao, exercicio e monitoramento. Use linguagem motivacional e pratica. Formato: checklist diario simplificado para WhatsApp."
+            }
+          ]
+        }
+      ]
+    },
+    "teleinterconsulta": {
+      "nome": "Teleinterconsulta",
+      "cor": "#F26522",
+      "descricao": "Consulta entre medicos (generalista + especialista) por plataforma digital para apoio a decisao clinica, sem necessidade do paciente estar presente.",
+      "desafios": [
+        {
+          "id": "TI-01",
+          "titulo": "Estruturar Pedido de Interconsulta com IA",
+          "problema": "70% dos pedidos de interconsulta chegam ao especialista com informacoes incompletas, gerando resposta inadequada ou necessidade de contato adicional para esclarecimentos.",
+          "metricas_alvo": ["completude do pedido", "tempo de resposta do especialista", "taxa de retrabalho"],
+          "perguntas_guia": [
+            "Quais informacoes sao essenciais para cada especialidade?",
+            "Como a IA pode ajudar o generalista a estruturar melhor o pedido?",
+            "Como reduzir o tempo entre pedido e resposta qualificada?"
+          ],
+          "prompts_exemplo": [
+            {
+              "nome": "Avaliar qualidade do pedido de interconsulta",
+              "prompt": "Voce e um especialista em cardiologia recebendo o pedido de interconsulta abaixo. Avalie a qualidade das informacoes fornecidas e liste o que esta faltando para voce conseguir responder com seguranca.\n\nPedido: 'Paciente 58 anos, HAS, DM2, com queixa de dor precordial aos esforcos ha 2 meses. ECG alterado. Solicito avaliacao cardiologica.'\n\nResposta esperada: 1) Informacoes presentes e relevantes, 2) Informacoes criticas faltando, 3) Como o pedido deveria ter sido estruturado, 4) Impacto da incompletude na sua resposta clinica."
+            },
+            {
+              "nome": "Gerar template de pedido completo",
+              "prompt": "Crie um template estruturado de pedido de teleinterconsulta para Cardiologia, preenchido com um caso ficticio realista. O template deve conter: motivo do pedido, resumo clinico, exames realizados, medicamentos em uso, pergunta especifica ao especialista e nivel de urgencia. O medico generalista deve conseguir preencher em menos de 5 minutos."
+            },
+            {
+              "nome": "Proposta de assistente de pedido",
+              "prompt": "Proponha como um assistente de IA poderia ajudar um medico generalista a montar um pedido de teleinterconsulta de forma guiada. Descreva: 1) Fluxo de perguntas que a IA faria ao medico, 2) Como a IA validaria a completude, 3) Como geraria o pedido final estruturado, 4) Beneficio para o especialista que recebe. Seja especifico e pratico."
+            }
+          ]
+        },
+        {
+          "id": "TI-02",
+          "titulo": "Priorizar Casos por Urgencia com IA",
+          "problema": "Especialistas recebem filas de 20-50 pedidos diarios sem criterio claro de priorizacao, respondendo por ordem de chegada mesmo quando ha casos criticos aguardando.",
+          "metricas_alvo": ["tempo de resposta em casos criticos", "taxa de priorizacao correta", "satisfacao do generalista"],
+          "perguntas_guia": [
+            "Como a IA pode classificar urgencia clinica sem ver o paciente?",
+            "Quais sinais no pedido indicam necessidade de resposta rapida?",
+            "Como equilibrar priorizacao automatica com responsabilidade clinica?"
+          ],
+          "prompts_exemplo": [
+            {
+              "nome": "Classificar urgencia de fila de interconsultas",
+              "prompt": "Voce e um sistema de triagem de teleinterconsultas. Analise os 3 pedidos abaixo e ordene por prioridade clinica (1=mais urgente), justificando cada decisao.\n\nPedido A: 'Paciente 72 anos, confusao mental aguda, sem febre, glicemia 450. Solicito endocrinologia.'\nPedido B: 'Paciente 35 anos, hipotireoidismo em acompanhamento, TSH levemente alterado em exame de rotina. Solicito endocrinologia.'\nPedido C: 'Paciente 55 anos, DM2 controlado, quer segunda opiniao sobre insulinizacao. Nao urgente.'\n\nOrdenacao com justificativa clinica para cada caso."
+            },
+            {
+              "nome": "Definir criterios de priorizacao por especialidade",
+              "prompt": "Crie uma rubrica de priorizacao de teleinterconsultas para Cardiologia com 3 niveis: Urgente (responder em 2h), Prioritario (responder em 24h), Eletivo (responder em 72h). Para cada nivel, liste 5 criterios clinicos objetivos que um sistema de IA poderia identificar automaticamente no texto do pedido."
+            }
+          ]
+        },
+        {
+          "id": "TI-03",
+          "titulo": "Sintese Clinica para Resposta Mais Rapida",
+          "problema": "Especialistas levam em media 20 minutos para ler, interpretar e responder uma interconsulta por falta de resumo estruturado, reduzindo capacidade de resposta diaria.",
+          "metricas_alvo": ["tempo medio de resposta", "volume de interconsultas respondidas/dia", "qualidade percebida da resposta"],
+          "perguntas_guia": [
+            "Como a IA pode pre-processar o pedido para o especialista?",
+            "Que formato de resumo reduz mais o tempo de leitura sem perder informacao?",
+            "Como a IA pode sugerir resposta sem substituir o julgamento clinico?"
+          ],
+          "prompts_exemplo": [
+            {
+              "nome": "Resumir caso para especialista",
+              "prompt": "Voce e um assistente clinico. Resuma o caso abaixo em no maximo 5 linhas para um especialista em neurologia, destacando apenas o que e relevante para a decisao clinica. Elimine redundancias e linguagem informal.\n\nTexto original: 'Paciente do sexo masculino, 61 anos de idade, aposentado, chegou ao consultorio queixando-se de dor de cabeca que comecou ha uns 15 dias mais ou menos, diz que nunca teve nada assim antes, a dor e forte, na nuca, piora quando deita, tomou dipirona e nao passou muito, a esposa diz que ele ficou um pouco confuso ontem a noite por uns 20 minutos mas depois voltou ao normal, sem febre, pressao hoje estava 160x100, fez tomografia que nao mostrou sangramento mas radiologista pediu ressonancia.'"
+            },
+            {
+              "nome": "Rascunho de resposta ao generalista",
+              "prompt": "Com base no resumo clinico abaixo, gere um rascunho de resposta de teleinterconsulta de neurologia para o medico generalista. A resposta deve conter: 1) Hipotese diagnostica mais provavel, 2) Conduta recomendada, 3) Exames adicionais se necessario, 4) Criterios de encaminhamento presencial, 5) Retorno/reavaliacao. Tom: tecnico mas colaborativo.\n\nCaso: Paciente 61 anos, cefaleia de inicio subito ha 15 dias, rigidez de nuca, episodio breve de confusao, PA 160x100, TC sem sangramento, ressonancia pendente."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
