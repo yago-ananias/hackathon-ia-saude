@@ -23,9 +23,9 @@ Write-Host "OK: $pythonVersion em $pythonPath" -ForegroundColor Green
 # --- 2. Instalar dependencias Python ---
 Write-Host ""
 Write-Host "[2/5] Instalando dependencias Python..." -ForegroundColor Yellow
-pip install streamlit requests --quiet
+pip install streamlit requests pandas --quiet
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "OK: streamlit e requests instalados" -ForegroundColor Green
+    Write-Host "OK: streamlit, requests e pandas instalados" -ForegroundColor Green
 } else {
     Write-Host "ERRO ao instalar dependencias" -ForegroundColor Red
     exit 1

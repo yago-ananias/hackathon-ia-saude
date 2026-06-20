@@ -10,6 +10,7 @@
 ### 🎯 Você é PARTICIPANTE do hackathon?
 👉 Comece por **[PARTICIPANTES_LEIA_ME.md](PARTICIPANTES_LEIA_ME.md)**
 Guia de 30 minutos para preparar seu notebook antes do dia.
+Depois leia o **[GUIA_PROMPT.md](GUIA_PROMPT.md)** (10 min) para escrever bons prompts.
 
 ### 🎯 Você é o ORGANIZADOR / FACILITADOR?
 👉 Comece por **[PLANO_FACILITADOR.md](PLANO_FACILITADOR.md)**
@@ -28,17 +29,37 @@ hackathon-ia-saude/
 │
 ├── 📘 README.md                    ← Você está aqui (índice)
 ├── 👥 PARTICIPANTES_LEIA_ME.md     ← Guia de setup para participantes
+├── 🧠 GUIA_PROMPT.md               ← Guia de engenharia de prompt (10 min)
 ├── 🎯 PLANO_FACILITADOR.md         ← Plano completo do organizador
 ├── 📨 MENSAGENS_TEMPLATE.md        ← Mensagens prontas (D-7 até pós)
 ├── 🛟 BACKUP_SERVIDOR.md           ← Como subir servidor central como backup
-├── 📋 desafios_por_trilha.md       ← Os 6 desafios (3 por trilha)
+├── 📋 desafios_por_trilha.md       ← Os 6 desafios (GERADO do JSON)
 │
 ├── ⚙️ setup_hackathon.ps1          ← Script de instalação automática
 ├── 🐍 app_hackathon.py             ← Interface Streamlit
-├── 📦 exemplos_prompts.json        ← 14 prompts prontos
+├── 📦 exemplos_prompts.json        ← FONTE ÚNICA: desafios + prompts
+├── 🔧 gerar_desafios_md.py         ← Gera o .md a partir do JSON
+│
+├── 📊 dados/
+│   ├── gerar_dados_sinteticos.py   ← Gera os CSVs fictícios
+│   ├── agendamentos.csv            ← 200 agendamentos (no-show)
+│   └── fila_interconsulta.csv      ← 70 pedidos (priorização)
 │
 └── 📁 output/                       ← Resultados salvos (gitignore)
 ```
+
+## 🧩 Recursos do app
+
+| Recurso | O que faz |
+|---|---|
+| **Persona (system prompt)** | Escolha o "papel" da IA na barra lateral — melhora muito modelos pequenos |
+| **Temperatura** | Ajuste criatividade × precisão (baixa p/ clínica, alta p/ brainstorm) |
+| **Detecção de modelos** | Lista automaticamente os modelos instalados no Ollama |
+| **⚖️ Comparar 2 modelos** | Roda o mesmo prompt no MedGemma e no Gemma 4 lado a lado |
+| **💬 Chat / Refino** | Conversa multi-turn — a IA lembra do contexto (ensina iteração) |
+| **📊 Dados** | Usa os CSVs fictícios: classifica risco de no-show, prioriza fila |
+| **Métricas** | Mostra tokens/s e tempo a cada resposta |
+| **Salvar resultados** | Persiste a resposta e exporta `.txt` |
 
 ---
 

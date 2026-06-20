@@ -1,157 +1,175 @@
-# Desafios do Hackathon IA + Saúde Digital
+# Desafios do Hackathon IA + Saude Digital
 
-> **Formato:** 4 horas | 2 equipes | ~20 pessoas cada
-> **Entregável final:** Pitch de 15 minutos com proposta de solução baseada em IA
+> ⚠️ **Arquivo gerado automaticamente** a partir de `exemplos_prompts.json`.
+> Nao edite a mao - rode `python gerar_desafios_md.py` apos mudar o JSON.
 
----
-
-## 🩺 Trilha 1 — Equipe TeleEletiva
-
-### Contexto
-Teleconsulta eletiva é uma consulta médica agendada por vídeo ou chat. O paciente agenda com antecedência, passa pela triagem e é atendido por um médico de forma remota.
+> **Formato:** 4 horas | 2 equipes (~20 pessoas cada) | Entregavel: pitch de 15 min com solucao baseada em IA
 
 ---
 
-### Desafio TE-01 — Reduzir No-Show com IA
+## 🩺 Trilha — Equipe Teleconsulta Eletiva
 
-**Problema real:**
-30% dos pacientes agendados não comparecem à teleconsulta eletiva, gerando ociosidade médica, perda de acesso para outros pacientes e custo operacional sem retorno.
+_Consultas medicas agendadas realizadas por video ou chat, sem necessidade de presenca fisica._
 
-**O que vocês precisam responder:**
-- Como a IA pode identificar quem tem maior risco de não comparecer?
-- Que ação preventiva (mensagem, ligação, reagendamento) é mais eficaz para cada perfil?
-- Como fazer isso de forma escalável sem aumentar custo operacional?
+### TE-01 — Reduzir No-Show com IA
 
-**Métricas de sucesso:**
-| Métrica | Hoje (hipotético) | Meta |
-|---------|-------------------|------|
+**Problema real:**  
+30% dos pacientes agendados nao comparecem a teleconsulta eletiva, gerando ociosidade medica e perda de acesso para outros pacientes.
+
+**Perguntas-guia:**
+- Quais fatores mais influenciam o nao comparecimento?
+- Como a IA pode prever quem nao vai comparecer?
+- Que tipo de mensagem reduz o no-show sem irritar o paciente?
+
+**Metricas de sucesso:**
+
+| Metrica | Hoje | Meta |
+|---------|------|------|
 | Taxa de no-show | 30% | < 15% |
 | Taxa de reagendamento | 10% | > 25% |
-| Tempo ocioso médico/dia | 1,5h | < 30min |
+| Tempo ocioso medico/dia | 1,5h | < 30min |
 
-**Entregável esperado:**
-1. Proposta de solução com IA (como funciona, quais dados usa)
-2. Exemplo de prompt que vocês testaram e funcionou
-3. Métrica principal para medir sucesso
-4. Um risco assistencial que precisaria ser gerenciado
+**Dados sinteticos para este desafio:** `dados/agendamentos.csv` (aba 📊 Dados no app)
+
+**Prompts prontos no app:** "Classificar risco de no-show", "Gerar mensagem de lembrete personalizada", "Proposta de solucao completa"
+
+**Entregavel:** 1) Proposta com IA · 2) Prompt testado no app · 3) Metrica principal · 4) Risco assistencial a gerenciar
 
 ---
 
-### Desafio TE-02 — Triagem Inteligente de Sintomas
+### TE-02 — Triagem Inteligente de Sintomas
 
-**Problema real:**
-25% dos pacientes são direcionados ao especialista errado na primeira consulta, gerando reencaminhamento, atraso no cuidado e consulta desperdiçada.
+**Problema real:**  
+Pacientes sao direcionados ao especialista errado em 25% dos casos, gerando reencaminhamento, atraso no cuidado e desperdicio de consulta.
 
-**O que vocês precisam responder:**
+**Perguntas-guia:**
 - Como a IA pode entender a queixa principal e sugerir o especialista correto?
-- Que perguntas de triagem aumentam a precisão sem aumentar abandono do fluxo?
-- Como garantir segurança clínica em triagem automatizada?
+- Que perguntas de triagem aumentam a precisao da classificacao?
+- Como equilibrar agilidade e seguranca clinica na triagem automatizada?
 
-**Métricas de sucesso:**
-| Métrica | Hoje | Meta |
+**Metricas de sucesso:**
+
+| Metrica | Hoje | Meta |
 |---------|------|------|
 | Taxa de encaminhamento incorreto | 25% | < 8% |
-| Tempo até consulta correta | 12 dias | < 5 dias |
-| Taxa de resolução na 1ª consulta | 60% | > 80% |
+| Tempo ate consulta correta | 12 dias | < 5 dias |
+| Taxa de resolucao na 1a consulta | 60% | > 80% |
+
+**Prompts prontos no app:** "Triagem de queixa clinica", "Fluxo de perguntas de triagem"
+
+**Entregavel:** 1) Proposta com IA · 2) Prompt testado no app · 3) Metrica principal · 4) Risco assistencial a gerenciar
 
 ---
 
-### Desafio TE-03 — Adesão ao Cuidado Pós-Consulta
+### TE-03 — Plano de Cuidado Pos-Consulta com IA
 
-**Problema real:**
-40% dos pacientes não seguem as orientações pós-teleconsulta por falta de clareza ou esquecimento, gerando reconsulta desnecessária em menos de 30 dias.
+**Problema real:**  
+40% dos pacientes nao seguem as orientacoes pos-teleconsulta por falta de clareza ou esquecimento, gerando reconsulta desnecessaria em curto prazo.
 
-**O que vocês precisam responder:**
-- Como a IA pode transformar o resumo médico em linguagem acessível ao paciente?
-- Que tipo de lembrete aumenta adesão sem ser invasivo?
-- Como personalizar por perfil (idade, escolaridade, cronicidade)?
+**Perguntas-guia:**
+- Como transformar o resumo medico em linguagem acessivel ao paciente?
+- Que tipo de lembrete aumenta adesao sem ser invasivo?
+- Como personalizar o plano de cuidado por perfil de paciente?
+
+**Metricas-alvo:** taxa de adesao ao cuidado, taxa de reconsulta em 30 dias, satisfacao do paciente
+
+**Prompts prontos no app:** "Simplificar orientacao medica", "Criar plano de cuidado semanal"
+
+**Entregavel:** 1) Proposta com IA · 2) Prompt testado no app · 3) Metrica principal · 4) Risco assistencial a gerenciar
 
 ---
 
-## 🔄 Trilha 2 — Equipe TeleInterconsulta
+## 🔄 Trilha — Equipe Teleinterconsulta
 
-### Contexto
-Teleinterconsulta é uma consulta entre médicos (generalista + especialista) via plataforma digital. O médico generalista pede apoio ao especialista para um caso específico, sem necessidade do paciente estar presente.
+_Consulta entre medicos (generalista + especialista) por plataforma digital para apoio a decisao clinica, sem necessidade do paciente estar presente._
 
----
+### TI-01 — Estruturar Pedido de Interconsulta com IA
 
-### Desafio TI-01 — Estruturar Pedido de Interconsulta com IA
+**Problema real:**  
+70% dos pedidos de interconsulta chegam ao especialista com informacoes incompletas, gerando resposta inadequada ou necessidade de contato adicional para esclarecimentos.
 
-**Problema real:**
-70% dos pedidos de teleinterconsulta chegam ao especialista com informações incompletas (sem exames, sem histórico, sem pergunta objetiva), gerando resposta inadequada ou necessidade de contato adicional.
-
-**O que vocês precisam responder:**
-- Que informações são essenciais para cada especialidade?
-- Como a IA pode guiar o generalista a estruturar melhor o pedido?
+**Perguntas-guia:**
+- Quais informacoes sao essenciais para cada especialidade?
+- Como a IA pode ajudar o generalista a estruturar melhor o pedido?
 - Como reduzir o tempo entre pedido e resposta qualificada?
 
-**Métricas de sucesso:**
-| Métrica | Hoje | Meta |
+**Metricas de sucesso:**
+
+| Metrica | Hoje | Meta |
 |---------|------|------|
 | Completude do pedido | 30% | > 85% |
 | Tempo de resposta do especialista | 48h | < 12h |
 | Taxa de retrabalho por info incompleta | 40% | < 10% |
 
-**Entregável esperado:**
-1. Proposta de assistente de IA para estruturar pedidos
-2. Template de pedido testado com o modelo
-3. Métrica principal para medir sucesso
-4. Um risco que precisaria ser gerenciado
+**Prompts prontos no app:** "Avaliar qualidade do pedido de interconsulta", "Gerar template de pedido completo", "Proposta de assistente de pedido"
+
+**Entregavel:** 1) Proposta com IA · 2) Prompt testado no app · 3) Metrica principal · 4) Risco assistencial a gerenciar
 
 ---
 
-### Desafio TI-02 — Priorizar Casos por Urgência com IA
+### TI-02 — Priorizar Casos por Urgencia com IA
 
-**Problema real:**
-Especialistas recebem 20-50 pedidos diários sem critério claro de priorização. Respondem por ordem de chegada mesmo quando há casos clínicos críticos aguardando há horas.
+**Problema real:**  
+Especialistas recebem filas de 20-50 pedidos diarios sem criterio claro de priorizacao, respondendo por ordem de chegada mesmo quando ha casos criticos aguardando.
 
-**O que vocês precisam responder:**
-- Como a IA pode classificar urgência clínica a partir do texto do pedido?
-- Quais sinais linguísticos/clínicos indicam necessidade de resposta imediata?
-- Como equilibrar priorização automática com responsabilidade médica?
+**Perguntas-guia:**
+- Como a IA pode classificar urgencia clinica sem ver o paciente?
+- Quais sinais no pedido indicam necessidade de resposta rapida?
+- Como equilibrar priorizacao automatica com responsabilidade clinica?
 
-**Métricas de sucesso:**
-| Métrica | Hoje | Meta |
+**Metricas de sucesso:**
+
+| Metrica | Hoje | Meta |
 |---------|------|------|
-| Tempo de resposta casos críticos | 48h | < 2h |
-| Taxa de priorização correta | 45% | > 90% |
-| Satisfação do médico generalista | NPS 20 | NPS 50+ |
+| Tempo de resposta casos criticos | 48h | < 2h |
+| Taxa de priorizacao correta | 45% | > 90% |
+| Satisfacao do medico generalista | NPS 20 | NPS 50+ |
+
+**Dados sinteticos para este desafio:** `dados/fila_interconsulta.csv` (aba 📊 Dados no app)
+
+**Prompts prontos no app:** "Classificar urgencia de fila de interconsultas", "Definir criterios de priorizacao por especialidade"
+
+**Entregavel:** 1) Proposta com IA · 2) Prompt testado no app · 3) Metrica principal · 4) Risco assistencial a gerenciar
 
 ---
 
-### Desafio TI-03 — Síntese Clínica para Resposta Mais Rápida
+### TI-03 — Sintese Clinica para Resposta Mais Rapida
 
-**Problema real:**
-Especialistas levam em média 20 minutos para ler, interpretar e responder uma interconsulta por falta de resumo estruturado, limitando a capacidade de atender mais casos por dia.
+**Problema real:**  
+Especialistas levam em media 20 minutos para ler, interpretar e responder uma interconsulta por falta de resumo estruturado, reduzindo capacidade de resposta diaria.
 
-**O que vocês precisam responder:**
-- Como a IA pode pré-processar o pedido e gerar um resumo útil para o especialista?
-- Que formato de resumo reduz tempo de leitura sem perder informação clínica relevante?
-- Como a IA pode sugerir rascunho de resposta sem substituir o julgamento clínico?
+**Perguntas-guia:**
+- Como a IA pode pre-processar o pedido para o especialista?
+- Que formato de resumo reduz mais o tempo de leitura sem perder informacao?
+- Como a IA pode sugerir resposta sem substituir o julgamento clinico?
+
+**Metricas-alvo:** tempo medio de resposta, volume de interconsultas respondidas/dia, qualidade percebida da resposta
+
+**Prompts prontos no app:** "Resumir caso para especialista", "Rascunho de resposta ao generalista"
+
+**Entregavel:** 1) Proposta com IA · 2) Prompt testado no app · 3) Metrica principal · 4) Risco assistencial a gerenciar
 
 ---
 
-## 🏆 Critérios de Avaliação
+## 🏆 Criterios de Avaliacao
 
-| Critério | Peso | O que avaliar |
+| Criterio | Peso | O que avaliar |
 |----------|------|---------------|
-| **Clareza do problema** | 25% | O problema está bem definido? A dor é real? |
-| **Uso da IA** | 30% | A IA realmente ajuda? O prompt foi testado? |
-| **Viabilidade** | 20% | É possível implementar em 6 meses? |
-| **Impacto** | 15% | Qual métrica melhora? Em quanto? |
+| **Clareza do problema** | 25% | O problema esta bem definido? A dor e real? |
+| **Uso da IA** | 30% | A IA realmente ajuda? O prompt foi testado no app? |
+| **Viabilidade** | 20% | E possivel implementar em 6 meses? |
+| **Impacto** | 15% | Qual metrica melhora? Em quanto? |
 | **Risco assistencial** | 10% | O risco foi identificado e mitigado? |
-
----
 
 ## 📋 Estrutura do Pitch (15 minutos)
 
-1. **Problema** (2 min) — Qual dor você resolveu? Qual a magnitude?
-2. **Solução com IA** (4 min) — Como funciona? Mostre um exemplo real do app
-3. **Dados e métricas** (3 min) — O que muda? Como vamos medir?
-4. **Riscos e mitigações** (2 min) — O que pode dar errado e como prevenir?
-5. **Próximos passos** (2 min) — Se tivesse 30 dias, o que faria primeiro?
-6. **Perguntas** (2 min)
+1. Problema (2 min) - Qual dor voce resolveu? Qual a magnitude?
+2. Solucao com IA (4 min) - Como funciona? Mostre um exemplo real do app
+3. Dados e metricas (3 min) - O que muda? Como vamos medir?
+4. Riscos e mitigacoes (2 min) - O que pode dar errado e como prevenir?
+5. Proximos passos (2 min) - Se tivesse 30 dias, o que faria primeiro?
+6. Perguntas (2 min)
 
 ---
 
-*Hackathon IA + Saúde Digital | Versão 1.0*
+*Hackathon IA + Saude Digital — desafios derivados de exemplos_prompts.json*

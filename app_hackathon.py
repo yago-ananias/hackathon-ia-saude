@@ -1,18 +1,31 @@
 """
 HACKATHON IA + SAUDE DIGITAL
-App Streamlit para explorar prompts com Gemma via Ollama
+App Streamlit para explorar prompts com modelos locais (Ollama).
 Trilhas: Teleconsulta Eletiva | Teleinterconsulta
+
+Recursos:
+- Persona (system prompt) e temperatura ajustaveis na barra lateral
+- Lista de modelos detectada automaticamente do Ollama
+- Metricas de velocidade (tokens/s) a cada resposta
+- Comparacao lado a lado de 2 modelos no mesmo prompt
+- Chat multi-turn para ensinar refino iterativo de prompt
+- Resultados salvos de forma persistente (corrige bug do salvar)
 """
 
 import sys
 import json
 import time
 import requests
+import pandas as pd
 import streamlit as st
 from datetime import datetime
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+BASE = Path(__file__).parent
+OUTPUT_DIR = BASE / "output"
+DADOS_DIR = BASE / "dados"
 
 # -------------------------------------------------------------------
 # Configuracao da pagina
@@ -25,47 +38,151 @@ st.set_page_config(
 )
 
 # -------------------------------------------------------------------
-# Carregar prompts
+# Personas (system prompts) - melhoram MUITO modelos pequenos
+# -------------------------------------------------------------------
+PERSONAS = {
+    "Nenhuma (prompt cru)": "",
+    "Especialista clinico (saude)": (
+        "Voce e um medico especialista senior em telessaude no Brasil. "
+        "Responda com rigor clinico, linguagem tecnica precisa e seguranca do paciente em primeiro lugar. "
+        "Quando faltar informacao, diga o que falta em vez de assumir. "
+        "Nunca invente diagnostico definitivo sem dados suficientes. Responda sempre em portugues do Brasil."
+    ),
+    "Gestor de produto (growth/negocio)": (
+        "Voce e um gestor de produto senior em saude digital em uma operadora de saude no Brasil. "
+        "Conecte cada analise a uma decisao de negocio. Diferencie metrica operacional de desfecho clinico. "
+        "Seja objetivo, pratico e executivo. Considere experiencia do paciente, eficiencia operacional e "
+        "sustentabilidade economica. Responda sempre em portugues do Brasil."
+    ),
+    "Facilitador didatico (explica simples)": (
+        "Voce e um facilitador que explica IA de forma simples para um time multidisciplinar de saude. "
+        "Use linguagem clara, exemplos do dia a dia e evite jargao desnecessario. Responda em portugues do Brasil."
+    ),
+}
+
+FALLBACK_MODELOS = ["medgemma:4b", "gemma4:e2b"]
+
+# -------------------------------------------------------------------
+# Dados (prompts e desafios)
 # -------------------------------------------------------------------
 @st.cache_data
 def carregar_prompts():
-    path = Path(__file__).parent / "exemplos_prompts.json"
-    with open(path, "r", encoding="utf-8") as f:
+    with open(BASE / "exemplos_prompts.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
 dados = carregar_prompts()
 
-# -------------------------------------------------------------------
-# Funcoes utilitarias
-# -------------------------------------------------------------------
-def chamar_ollama(prompt: str, modelo: str, url_base: str) -> str:
-    """Chama o Ollama via API REST e retorna a resposta."""
-    try:
-        resp = requests.post(
-            f"{url_base}/api/generate",
-            json={"model": modelo, "prompt": prompt, "stream": False},
-            timeout=120,
-        )
-        if resp.status_code == 200:
-            return resp.json().get("response", "Sem resposta.")
-        return f"Erro HTTP {resp.status_code}: {resp.text}"
-    except requests.exceptions.ConnectionError:
-        return "❌ Nao foi possivel conectar ao Ollama. Verifique se ele esta rodando (execute: ollama serve)"
-    except requests.exceptions.Timeout:
-        return "⏱️ Timeout: o modelo demorou mais de 2 minutos. Tente um prompt mais curto."
-    except Exception as e:
-        return f"❌ Erro inesperado: {str(e)}"
 
-def salvar_resultado(trilha: str, desafio: str, prompt: str, resposta: str):
+@st.cache_data
+def carregar_csv(nome: str):
+    """Carrega um CSV da pasta dados/. Retorna None se nao existir."""
+    caminho = DADOS_DIR / nome
+    if caminho.exists():
+        return pd.read_csv(caminho)
+    return None
+
+# -------------------------------------------------------------------
+# Integracao com Ollama
+# -------------------------------------------------------------------
+def listar_modelos(url_base: str):
+    """Detecta modelos instalados no Ollama. Cai no fallback se offline."""
+    try:
+        r = requests.get(f"{url_base}/api/tags", timeout=5)
+        if r.status_code == 200:
+            nomes = [m["name"] for m in r.json().get("models", [])]
+            return nomes or FALLBACK_MODELOS
+    except Exception:
+        pass
+    return FALLBACK_MODELOS
+
+
+def _metricas(chunk_final: dict, segundos: float) -> str:
+    """Monta string de metricas a partir do chunk final do Ollama."""
+    eval_count = chunk_final.get("eval_count")
+    eval_dur = chunk_final.get("eval_duration")  # nanosegundos
+    if eval_count and eval_dur:
+        tok_s = eval_count / (eval_dur / 1e9)
+        return f"{eval_count} tokens · {tok_s:.0f} tok/s · {segundos:.1f}s"
+    return f"{segundos:.1f}s"
+
+
+def gerar_stream(prompt: str, modelo: str, url_base: str, system: str = "",
+                 temperatura: float = 0.7, placeholder=None):
+    """Gera resposta via /api/generate com streaming. Retorna (texto, metricas)."""
+    payload = {
+        "model": modelo,
+        "prompt": prompt,
+        "stream": True,
+        "options": {"temperature": temperatura},
+    }
+    if system:
+        payload["system"] = system
+    return _consumir_stream(f"{url_base}/api/generate", payload, placeholder, "response")
+
+
+def chat_stream(mensagens: list, modelo: str, url_base: str,
+                temperatura: float = 0.7, placeholder=None):
+    """Gera resposta multi-turn via /api/chat com streaming. Retorna (texto, metricas)."""
+    payload = {
+        "model": modelo,
+        "messages": mensagens,
+        "stream": True,
+        "options": {"temperature": temperatura},
+    }
+    return _consumir_stream(f"{url_base}/api/chat", payload, placeholder, "chat")
+
+
+def _consumir_stream(endpoint: str, payload: dict, placeholder, modo: str):
+    """Consome o stream do Ollama e devolve (texto, metricas). modo: 'response' ou 'chat'."""
+    inicio = time.time()
+    try:
+        with requests.post(endpoint, json=payload, timeout=(10, 600), stream=True) as resp:
+            if resp.status_code != 200:
+                return f"❌ Erro HTTP {resp.status_code}: {resp.text}", ""
+            texto = ""
+            chunk_final = {}
+            for linha in resp.iter_lines():
+                if not linha:
+                    continue
+                try:
+                    chunk = json.loads(linha.decode("utf-8"))
+                except json.JSONDecodeError:
+                    continue
+                if modo == "chat":
+                    parte = chunk.get("message", {}).get("content", "")
+                else:
+                    parte = chunk.get("response", "")
+                texto += parte
+                if placeholder is not None:
+                    placeholder.markdown(texto + " ▌")
+                if chunk.get("done"):
+                    chunk_final = chunk
+                    break
+            if placeholder is not None:
+                placeholder.empty()
+            metr = _metricas(chunk_final, time.time() - inicio)
+            return (texto if texto else "Sem resposta."), metr
+    except requests.exceptions.ConnectionError:
+        return "❌ Nao foi possivel conectar ao Ollama. Verifique se ele esta rodando (ollama serve).", ""
+    except requests.exceptions.Timeout:
+        return "⏱️ Timeout: modelo demorou demais. Tente um prompt mais curto ou o MedGemma 4B (mais rapido).", ""
+    except Exception as e:
+        return f"❌ Erro inesperado: {str(e)}", ""
+
+
+def salvar_resultado(trilha: str, desafio: str, prompt: str, resposta: str,
+                     modelo: str = "", system: str = "", metricas: str = "") -> str:
     """Salva resultado em arquivo txt na pasta output."""
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
+    OUTPUT_DIR.mkdir(exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     nome = f"{ts}_{trilha}_{desafio[:20].replace(' ', '_')}.txt"
-    path = output_dir / nome
+    path = OUTPUT_DIR / nome
     conteudo = f"""HACKATHON IA + SAUDE DIGITAL
 Trilha: {trilha}
 Desafio: {desafio}
+Modelo: {modelo}
+Persona: {system[:80] + '...' if system else 'nenhuma'}
+Metricas: {metricas}
 Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M')}
 {'='*60}
 
@@ -80,6 +197,18 @@ RESPOSTA DO MODELO:
     path.write_text(conteudo, encoding="utf-8")
     return str(path)
 
+
+# -------------------------------------------------------------------
+# Callbacks (forma correta de mexer em session_state sem erro)
+# -------------------------------------------------------------------
+def carregar_exemplo(chave_widget: str, texto: str):
+    st.session_state[chave_widget] = texto
+
+
+def limpar_campo(chave_widget: str):
+    st.session_state[chave_widget] = ""
+
+
 # -------------------------------------------------------------------
 # Sidebar
 # -------------------------------------------------------------------
@@ -88,286 +217,357 @@ with st.sidebar:
     st.title("⚙️ Configuracoes")
     st.divider()
 
-    url_ollama = st.text_input(
-        "URL do Ollama",
-        value="http://localhost:11434",
-        help="Padrao: http://localhost:11434",
-    )
+    url_ollama = st.text_input("URL do Ollama", value="http://localhost:11434")
+
+    modelos_instalados = listar_modelos(url_ollama)
     modelo = st.selectbox(
         "Modelo",
-        [
-            "medgemma:4b",      # Especializado em saude
-            "gemma4:e2b",       # Gemma 4 mais recente
-        ],
+        modelos_instalados,
         index=0,
-        help="MedGemma: melhor para prompts clinicos. Gemma 4 E2B: melhor para produto/negocio.",
+        help="Lista detectada automaticamente do seu Ollama.",
     )
 
-    # Dica de qual modelo usar
-    st.markdown("**💡 Qual modelo usar?**")
-    st.markdown("""
-    - 🏥 **MedGemma 4B** — Triagem, interconsulta, sintese clinica
-    - 🎯 **Gemma 4 E2B** — No-show, UX, jornada paciente
-    """)
+    persona_nome = st.selectbox(
+        "Persona (system prompt)",
+        list(PERSONAS.keys()),
+        index=1,
+        help="A persona orienta o tom e o foco. Modelos pequenos respondem MUITO melhor com persona.",
+    )
+    system_prompt = PERSONAS[persona_nome]
 
-    # Testar conexao
+    temperatura = st.slider(
+        "Temperatura", 0.0, 1.0, 0.7, 0.1,
+        help="Baixa (0.0-0.3) = preciso e factual. Alta (0.7-1.0) = criativo e variado.",
+    )
+
     if st.button("🔌 Testar Conexao", use_container_width=True):
         try:
             r = requests.get(f"{url_ollama}/api/tags", timeout=5)
             if r.status_code == 200:
-                modelos_disponiveis = [m["name"] for m in r.json().get("models", [])]
-                st.success(f"✅ Ollama conectado!")
-                if modelos_disponiveis:
-                    st.info("Modelos: " + ", ".join(modelos_disponiveis))
+                nomes = [m["name"] for m in r.json().get("models", [])]
+                st.success("✅ Ollama conectado!")
+                st.info("Modelos: " + (", ".join(nomes) if nomes else "nenhum baixado"))
             else:
                 st.error("Ollama respondeu com erro.")
         except Exception:
             st.error("❌ Ollama nao encontrado. Execute: ollama serve")
 
     st.divider()
-    st.markdown("**⏱️ Agenda do Hackathon**")
-    st.markdown("""
-    | Horario | Atividade |
-    |---------|-----------|
-    | 0h00 | Abertura + Setup |
-    | 0h30 | Exploracao livre |
-    | 1h00 | Sprint solucao |
-    | 2h30 | Construir pitch |
-    | 3h30 | Apresentacoes |
-    """)
+    st.markdown("**💡 Qual modelo usar?**")
+    st.markdown("- 🏥 **MedGemma** - triagem, interconsulta, clinica\n- 🎯 **Gemma 4** - no-show, UX, negocio")
     st.divider()
-    st.caption("Hackathon IA + Saude Digital")
-    st.caption("Powered by Gemma via Ollama")
+    st.caption("Hackathon IA + Saude Digital · Gemma/MedGemma via Ollama")
 
 # -------------------------------------------------------------------
 # Header
 # -------------------------------------------------------------------
 st.title("🏥 Hackathon IA + Saude Digital")
 st.markdown("**Explore como a Inteligencia Artificial pode transformar a saude digital**")
+st.caption(f"Modelo ativo: `{modelo}`  ·  Persona: _{persona_nome}_  ·  Temperatura: {temperatura}")
 st.divider()
 
 # -------------------------------------------------------------------
-# Tabs principais
+# Bloco reutilizavel: exibe resposta persistida + botao salvar
+# (corrige o bug do salvar - resposta vive no session_state)
 # -------------------------------------------------------------------
-aba_eletiva, aba_interconsulta, aba_livre, aba_resultados = st.tabs([
-    "🩺 Equipe TeleEletiva",
-    "🔄 Equipe TeleInterconsulta",
-    "✏️ Prompt Livre",
-    "📁 Resultados Salvos",
-])
+def render_resposta(chave: str, trilha_label: str, desafio_label: str):
+    """Renderiza a ultima resposta guardada para 'chave' e oferece salvar."""
+    res = st.session_state.get(f"resp_{chave}")
+    if not res:
+        return
+    st.markdown("**Resposta do modelo:**")
+    st.markdown(res["resposta"])
+    if res.get("metricas"):
+        st.caption(f"⚡ {res['metricas']}  ·  modelo: `{res['modelo']}`")
+    if st.button("💾 Salvar resultado", key=f"save_{chave}"):
+        p = salvar_resultado(
+            trilha_label, desafio_label, res["prompt"], res["resposta"],
+            res.get("modelo", ""), res.get("system", ""), res.get("metricas", ""),
+        )
+        st.success(f"Salvo em: `{p}`")
 
-# ===================================================================
-# ABA: TELEELETIVA
-# ===================================================================
-with aba_eletiva:
-    trilha = dados["trilhas"]["teleeletiva"]
 
-    col1, col2 = st.columns([2, 1])
+def executar_e_guardar(chave: str, prompt: str, modelo: str, system: str,
+                       temperatura: float, url: str):
+    """Executa com streaming e guarda no session_state (persiste entre reruns)."""
+    st.markdown("**Resposta do modelo:**")
+    placeholder = st.empty()
+    placeholder.info("🤖 Gerando resposta...")
+    texto, metr = gerar_stream(prompt, modelo, url, system, temperatura, placeholder)
+    st.session_state[f"resp_{chave}"] = {
+        "prompt": prompt, "resposta": texto, "modelo": modelo,
+        "system": system, "metricas": metr,
+    }
+
+
+# -------------------------------------------------------------------
+# Painel reutilizavel de trilha (mata a duplicacao de codigo)
+# -------------------------------------------------------------------
+def painel_trilha(chave_trilha: str, trilha_label: str):
+    trilha = dados["trilhas"][chave_trilha]
+
+    col1, col2 = st.columns([3, 1])
     with col1:
-        st.header("🩺 Teleconsulta Eletiva")
+        st.header(trilha["nome"])
         st.markdown(f"*{trilha['descricao']}*")
     with col2:
-        st.metric("Desafios disponíveis", len(trilha["desafios"]))
+        st.metric("Desafios", len(trilha["desafios"]))
 
     st.divider()
 
-    # Seletor de desafio
-    opcoes_desafio = {d["titulo"]: d for d in trilha["desafios"]}
-    desafio_nome = st.selectbox(
-        "Escolha o desafio:",
-        list(opcoes_desafio.keys()),
-        key="sel_eletiva",
-    )
-    desafio = opcoes_desafio[desafio_nome]
+    opcoes = {f"{d['id']} — {d['titulo']}": d for d in trilha["desafios"]}
+    desafio_nome = st.selectbox("Escolha o desafio:", list(opcoes.keys()), key=f"sel_{chave_trilha}")
+    desafio = opcoes[desafio_nome]
 
-    # Card do desafio
     with st.expander(f"📋 {desafio['id']} — Contexto do Desafio", expanded=True):
         st.markdown(f"**Problema:** {desafio['problema']}")
-        st.markdown("**Metricas de sucesso:**")
-        for m in desafio["metricas_alvo"]:
-            st.markdown(f"  - {m}")
-        st.markdown("**Perguntas-guia para reflexao:**")
+        st.markdown("**Metricas-alvo:** " + ", ".join(desafio["metricas_alvo"]))
+        st.markdown("**Perguntas-guia:**")
         for p in desafio["perguntas_guia"]:
             st.markdown(f"  - _{p}_")
 
     st.subheader("💬 Testar com o Modelo")
-
-    # Botoes de prompts prontos
-    st.markdown("**Prompts prontos para comecar:**")
+    st.markdown("**Prompts prontos (clique para carregar):**")
+    chave_widget = f"ta_{chave_trilha}"
     cols = st.columns(len(desafio["prompts_exemplo"]))
-    prompt_selecionado = st.session_state.get("prompt_eletiva", "")
-
     for i, exemplo in enumerate(desafio["prompts_exemplo"]):
         with cols[i]:
-            if st.button(f"📝 {exemplo['nome']}", key=f"btn_eletiva_{i}", use_container_width=True):
-                st.session_state["prompt_eletiva"] = exemplo["prompt"]
-                st.rerun()
+            st.button(
+                f"📝 {exemplo['nome']}",
+                key=f"btn_{chave_trilha}_{i}",
+                use_container_width=True,
+                on_click=carregar_exemplo,
+                args=(chave_widget, exemplo["prompt"]),
+            )
 
-    # Area de prompt
     prompt_texto = st.text_area(
         "Prompt (edite livremente):",
-        value=st.session_state.get("prompt_eletiva", ""),
         height=200,
-        key="ta_eletiva",
-        placeholder="Digite seu prompt aqui ou clique em um dos botoes acima para carregar um exemplo...",
+        key=chave_widget,
+        placeholder="Digite seu prompt ou clique em um exemplo acima...",
     )
 
-    col_btn1, col_btn2, col_espaco = st.columns([1, 1, 3])
-    with col_btn1:
-        executar = st.button("▶️ Executar", type="primary", key="exec_eletiva", use_container_width=True)
-    with col_btn2:
-        limpar = st.button("🗑️ Limpar", key="clear_eletiva", use_container_width=True)
+    c1, c2, c3, _ = st.columns([1.2, 1.6, 1, 2])
+    with c1:
+        executar = st.button("▶️ Executar", type="primary", key=f"exec_{chave_trilha}", use_container_width=True)
+    with c2:
+        comparar = st.button("⚖️ Comparar 2 modelos", key=f"cmp_{chave_trilha}", use_container_width=True)
+    with c3:
+        st.button("🗑️ Limpar", key=f"clr_{chave_trilha}", use_container_width=True,
+                  on_click=limpar_campo, args=(chave_widget,))
 
-    if limpar:
-        st.session_state["prompt_eletiva"] = ""
-        st.rerun()
-
-    if executar and prompt_texto.strip():
-        with st.spinner("🤖 Processando... (pode levar 15-30 segundos)"):
-            inicio = time.time()
-            resposta = chamar_ollama(prompt_texto, modelo, url_ollama)
-            duracao = time.time() - inicio
-
-        st.success(f"✅ Resposta gerada em {duracao:.1f}s")
-        st.markdown("**Resposta do modelo:**")
-        st.markdown(resposta)
-
-        # Botao salvar
-        if st.button("💾 Salvar resultado", key="save_eletiva"):
-            path_salvo = salvar_resultado(
-                "TeleEletiva", desafio_nome, prompt_texto, resposta
-            )
-            st.success(f"Salvo em: `{path_salvo}`")
-    elif executar:
+    if comparar and prompt_texto.strip():
+        comparar_modelos(prompt_texto, modelos_instalados, system_prompt, temperatura, url_ollama)
+    elif executar and prompt_texto.strip():
+        executar_e_guardar(chave_trilha, prompt_texto, modelo, system_prompt, temperatura, url_ollama)
+    elif (executar or comparar):
         st.warning("Digite ou selecione um prompt antes de executar.")
 
+    render_resposta(chave_trilha, trilha_label, desafio_nome)
+
+
+# -------------------------------------------------------------------
+# Comparacao lado a lado de 2 modelos
+# -------------------------------------------------------------------
+def comparar_modelos(prompt: str, modelos: list, system: str, temperatura: float, url: str):
+    st.markdown("### ⚖️ Comparacao lado a lado")
+    if len(modelos) < 2:
+        st.warning("Voce precisa de pelo menos 2 modelos instalados para comparar.")
+        return
+    m_a, m_b = modelos[0], modelos[1]
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown(f"#### 🅰️ `{m_a}`")
+        ph_a = st.empty()
+        ph_a.info("Gerando...")
+        txt_a, met_a = gerar_stream(prompt, m_a, url, system, temperatura, ph_a)
+        ph_a.markdown(txt_a)
+        st.caption(f"⚡ {met_a}")
+    with col_b:
+        st.markdown(f"#### 🅱️ `{m_b}`")
+        ph_b = st.empty()
+        ph_b.info("Gerando...")
+        txt_b, met_b = gerar_stream(prompt, m_b, url, system, temperatura, ph_b)
+        ph_b.markdown(txt_b)
+        st.caption(f"⚡ {met_b}")
+    st.info("💡 Compare: qual respondeu melhor para ESTE tipo de tarefa? Clinico tende a ir melhor no MedGemma; negocio/UX no Gemma 4.")
+
+
 # ===================================================================
-# ABA: TELEINTERCONSULTA
+# Tabs principais
 # ===================================================================
-with aba_interconsulta:
-    trilha_ti = dados["trilhas"]["teleinterconsulta"]
+aba_eletiva, aba_ti, aba_dados, aba_chat, aba_livre, aba_result = st.tabs([
+    "🩺 TeleEletiva",
+    "🔄 TeleInterconsulta",
+    "📊 Dados",
+    "💬 Chat / Refino",
+    "✏️ Prompt Livre",
+    "📁 Resultados",
+])
 
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.header("🔄 Teleinterconsulta")
-        st.markdown(f"*{trilha_ti['descricao']}*")
-    with col2:
-        st.metric("Desafios disponíveis", len(trilha_ti["desafios"]))
+with aba_eletiva:
+    painel_trilha("teleeletiva", "TeleEletiva")
 
-    st.divider()
+with aba_ti:
+    painel_trilha("teleinterconsulta", "TeleInterconsulta")
 
-    opcoes_ti = {d["titulo"]: d for d in trilha_ti["desafios"]}
-    desafio_ti_nome = st.selectbox(
-        "Escolha o desafio:",
-        list(opcoes_ti.keys()),
-        key="sel_interconsulta",
+# ----------------------------- DADOS SINTETICOS -----------------------------
+with aba_dados:
+    st.header("📊 Dados Sinteticos (ficticios)")
+    st.markdown(
+        "Dados **ficticios** para vocês testarem ideias com matéria-prima realista. "
+        "Selecione um registro, gere o prompt automatico e veja o que o modelo faz com **dado**, não só texto solto."
     )
-    desafio_ti = opcoes_ti[desafio_ti_nome]
+    st.caption("Nenhum dado real de paciente. Gerados por regras em `dados/gerar_dados_sinteticos.py`.")
 
-    with st.expander(f"📋 {desafio_ti['id']} — Contexto do Desafio", expanded=True):
-        st.markdown(f"**Problema:** {desafio_ti['problema']}")
-        st.markdown("**Metricas de sucesso:**")
-        for m in desafio_ti["metricas_alvo"]:
-            st.markdown(f"  - {m}")
-        st.markdown("**Perguntas-guia para reflexao:**")
-        for p in desafio_ti["perguntas_guia"]:
-            st.markdown(f"  - _{p}_")
+    sub_ag, sub_fila = st.tabs(["🩺 Agendamentos (no-show)", "🔄 Fila de Interconsulta (priorizacao)"])
 
-    st.subheader("💬 Testar com o Modelo")
+    # ---- Agendamentos / no-show ----
+    with sub_ag:
+        df_ag = carregar_csv("agendamentos.csv")
+        if df_ag is None:
+            st.warning("Arquivo `dados/agendamentos.csv` nao encontrado. "
+                       "Rode: `python dados/gerar_dados_sinteticos.py`")
+        else:
+            taxa = (df_ag["compareceu"] == "nao").mean() * 100
+            c1, c2 = st.columns(2)
+            c1.metric("Total de agendamentos", len(df_ag))
+            c2.metric("Taxa de no-show", f"{taxa:.0f}%")
+            st.dataframe(df_ag, use_container_width=True, height=240)
 
-    st.markdown("**Prompts prontos para comecar:**")
-    cols_ti = st.columns(len(desafio_ti["prompts_exemplo"]))
-
-    for i, exemplo in enumerate(desafio_ti["prompts_exemplo"]):
-        with cols_ti[i]:
-            if st.button(f"📝 {exemplo['nome']}", key=f"btn_ti_{i}", use_container_width=True):
-                st.session_state["prompt_ti"] = exemplo["prompt"]
-                st.rerun()
-
-    prompt_ti = st.text_area(
-        "Prompt (edite livremente):",
-        value=st.session_state.get("prompt_ti", ""),
-        height=200,
-        key="ta_ti",
-        placeholder="Digite seu prompt aqui ou clique em um dos botoes acima...",
-    )
-
-    col_btn_ti1, col_btn_ti2, _ = st.columns([1, 1, 3])
-    with col_btn_ti1:
-        executar_ti = st.button("▶️ Executar", type="primary", key="exec_ti", use_container_width=True)
-    with col_btn_ti2:
-        limpar_ti = st.button("🗑️ Limpar", key="clear_ti", use_container_width=True)
-
-    if limpar_ti:
-        st.session_state["prompt_ti"] = ""
-        st.rerun()
-
-    if executar_ti and prompt_ti.strip():
-        with st.spinner("🤖 Processando... (pode levar 15-30 segundos)"):
-            inicio_ti = time.time()
-            resposta_ti = chamar_ollama(prompt_ti, modelo, url_ollama)
-            duracao_ti = time.time() - inicio_ti
-
-        st.success(f"✅ Resposta gerada em {duracao_ti:.1f}s")
-        st.markdown("**Resposta do modelo:**")
-        st.markdown(resposta_ti)
-
-        if st.button("💾 Salvar resultado", key="save_ti"):
-            path_salvo_ti = salvar_resultado(
-                "TeleInterconsulta", desafio_ti_nome, prompt_ti, resposta_ti
+            pid = st.selectbox("Selecione um paciente:", df_ag["id_paciente"].tolist(), key="sel_ag")
+            reg = df_ag[df_ag["id_paciente"] == pid].iloc[0]
+            prompt_ag = (
+                "Voce e especialista em experiencia do paciente em telessaude. "
+                "Analise o agendamento abaixo e classifique o RISCO de no-show (alto/medio/baixo) "
+                "com justificativa, e sugira 2 acoes preventivas personalizadas.\n\n"
+                f"- Idade: {reg['idade']} | Sexo: {reg['sexo']}\n"
+                f"- Especialidade: {reg['especialidade']} | Tipo: {reg['tipo_consulta']}\n"
+                f"- Antecedencia do agendamento: {reg['dias_antecedencia']} dias\n"
+                f"- Canal preferido: {reg['canal_preferido']}\n"
+                f"- No-shows nos ultimos 6 meses: {reg['historico_noshow_6m']}\n"
+                f"- Regiao: {reg['regiao']} | Periodo: {reg['periodo']} | Confirmou: {reg['confirmou_presenca']}"
             )
-            st.success(f"Salvo em: `{path_salvo_ti}`")
-    elif executar_ti:
-        st.warning("Digite ou selecione um prompt antes de executar.")
+            st.code(prompt_ag, language="text")
+            if st.button("▶️ Analisar este paciente", type="primary", key="run_ag"):
+                executar_e_guardar("dados_ag", prompt_ag, modelo, system_prompt, temperatura, url_ollama)
+            render_resposta("dados_ag", "Dados-NoShow", f"paciente-{pid}")
+            st.info(f"💡 Dica: o gabarito real deste paciente e **compareceu = {reg['compareceu']}**. "
+                    "A previsao do modelo bateu com a realidade?")
 
-# ===================================================================
-# ABA: PROMPT LIVRE
-# ===================================================================
+    # ---- Fila de interconsulta / priorizacao ----
+    with sub_fila:
+        df_f = carregar_csv("fila_interconsulta.csv")
+        if df_f is None:
+            st.warning("Arquivo `dados/fila_interconsulta.csv` nao encontrado. "
+                       "Rode: `python dados/gerar_dados_sinteticos.py`")
+        else:
+            urg = (df_f["urgencia_real"] == "urgente").sum()
+            c1, c2 = st.columns(2)
+            c1.metric("Pedidos na fila", len(df_f))
+            c2.metric("Casos urgentes", int(urg))
+            st.dataframe(df_f, use_container_width=True, height=240)
+
+            n = st.slider("Quantos pedidos enviar para priorizacao:", 3, 10, 5, key="sl_fila")
+            amostra = df_f.head(n)
+            blocos = []
+            for _, r in amostra.iterrows():
+                blocos.append(
+                    f"[{r['id_pedido']}] {r['especialidade']} - idade {r['idade_paciente']} - "
+                    f"espera {r['tempo_espera_horas']}h - alarme: {r['sinais_alarme']}\n"
+                    f"Resumo: {r['resumo_clinico']}"
+                )
+            prompt_fila = (
+                "Voce e um sistema de triagem de teleinterconsultas. Ordene os pedidos abaixo por "
+                "PRIORIDADE CLINICA (1 = mais urgente), justificando cada decisao em 1 linha.\n\n"
+                + "\n\n".join(blocos)
+            )
+            st.code(prompt_fila, language="text")
+            if st.button("▶️ Priorizar esta fila", type="primary", key="run_fila"):
+                executar_e_guardar("dados_fila", prompt_fila, modelo, system_prompt, temperatura, url_ollama)
+            render_resposta("dados_fila", "Dados-Fila", f"fila-{n}-pedidos")
+            with st.expander("👁️ Ver gabarito (urgencia_real) para comparar"):
+                st.dataframe(amostra[["id_pedido", "especialidade", "urgencia_real"]],
+                             use_container_width=True)
+
+# ----------------------------- CHAT / MULTI-TURN -----------------------------
+with aba_chat:
+    st.header("💬 Chat / Refino Iterativo")
+    st.markdown(
+        "Aqui a IA **lembra do que ja foi dito**. Use para refinar: peca uma resposta, "
+        "depois diga *'deixe mais curto'*, *'e se o paciente for idoso?'*, *'transforme em checklist'*. "
+        "Iterar e a habilidade central de usar IA."
+    )
+
+    if "chat_msgs" not in st.session_state:
+        st.session_state["chat_msgs"] = []
+
+    col_lim, _ = st.columns([1, 4])
+    with col_lim:
+        if st.button("🗑️ Nova conversa", use_container_width=True):
+            st.session_state["chat_msgs"] = []
+            st.rerun()
+
+    # Render historico
+    for msg in st.session_state["chat_msgs"]:
+        with st.chat_message("user" if msg["role"] == "user" else "assistant"):
+            st.markdown(msg["content"])
+
+    entrada = st.chat_input("Escreva sua mensagem para a IA...")
+    if entrada:
+        st.session_state["chat_msgs"].append({"role": "user", "content": entrada})
+        with st.chat_message("user"):
+            st.markdown(entrada)
+        # monta mensagens com system na frente
+        mensagens = []
+        if system_prompt:
+            mensagens.append({"role": "system", "content": system_prompt})
+        mensagens.extend(st.session_state["chat_msgs"])
+        with st.chat_message("assistant"):
+            ph = st.empty()
+            ph.info("🤖 Pensando...")
+            texto, metr = chat_stream(mensagens, modelo, url_ollama, temperatura, ph)
+            ph.markdown(texto)
+            if metr:
+                st.caption(f"⚡ {metr}  ·  modelo: `{modelo}`")
+        st.session_state["chat_msgs"].append({"role": "assistant", "content": texto})
+
+# ----------------------------- PROMPT LIVRE -----------------------------
 with aba_livre:
     st.header("✏️ Prompt Livre")
-    st.markdown("Explore qualquer ideia sem restricao de template.")
+    st.markdown("Explore qualquer ideia sem template. Persona e temperatura da barra lateral se aplicam.")
 
-    prompt_livre = st.text_area(
+    st.text_area(
         "Seu prompt:",
-        height=250,
+        height=220,
         key="ta_livre",
-        placeholder="Exemplo: 'Quais sao as 5 principais causas de atraso em teleconsultas eletivas e como a IA pode resolver cada uma?'",
+        placeholder="Ex: 'Liste 5 causas de atraso em teleconsultas e como a IA resolve cada uma.'",
     )
 
-    col_livre1, col_livre2, _ = st.columns([1, 1, 3])
-    with col_livre1:
+    cL1, cL2, cL3, _ = st.columns([1.2, 1.6, 1, 2])
+    with cL1:
         exec_livre = st.button("▶️ Executar", type="primary", key="exec_livre", use_container_width=True)
-    with col_livre2:
-        limpar_livre = st.button("🗑️ Limpar", key="clear_livre", use_container_width=True)
+    with cL2:
+        cmp_livre = st.button("⚖️ Comparar 2 modelos", key="cmp_livre", use_container_width=True)
+    with cL3:
+        st.button("🗑️ Limpar", key="clr_livre", use_container_width=True,
+                  on_click=limpar_campo, args=("ta_livre",))
 
-    if limpar_livre:
-        st.session_state["ta_livre"] = ""
-        st.rerun()
-
-    if exec_livre and prompt_livre.strip():
-        with st.spinner("🤖 Processando..."):
-            inicio_l = time.time()
-            resp_livre = chamar_ollama(prompt_livre, modelo, url_ollama)
-            dur_livre = time.time() - inicio_l
-        st.success(f"✅ Resposta em {dur_livre:.1f}s")
-        st.markdown(resp_livre)
-
-        if st.button("💾 Salvar", key="save_livre"):
-            p = salvar_resultado("Livre", "prompt-livre", prompt_livre, resp_livre)
-            st.success(f"Salvo em: `{p}`")
-    elif exec_livre:
+    prompt_livre = st.session_state.get("ta_livre", "")
+    if cmp_livre and prompt_livre.strip():
+        comparar_modelos(prompt_livre, modelos_instalados, system_prompt, temperatura, url_ollama)
+    elif exec_livre and prompt_livre.strip():
+        executar_e_guardar("livre", prompt_livre, modelo, system_prompt, temperatura, url_ollama)
+    elif (exec_livre or cmp_livre):
         st.warning("Digite um prompt antes de executar.")
 
-# ===================================================================
-# ABA: RESULTADOS SALVOS
-# ===================================================================
-with aba_resultados:
+    render_resposta("livre", "Livre", "prompt-livre")
+
+# ----------------------------- RESULTADOS -----------------------------
+with aba_result:
     st.header("📁 Resultados Salvos")
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
-
-    arquivos = sorted(output_dir.glob("*.txt"), reverse=True)
-
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    arquivos = sorted(OUTPUT_DIR.glob("*.txt"), reverse=True)
     if not arquivos:
         st.info("Nenhum resultado salvo ainda. Execute um prompt e clique em 'Salvar resultado'.")
     else:
@@ -375,9 +575,5 @@ with aba_resultados:
         for arq in arquivos:
             with st.expander(f"📄 {arq.name}"):
                 st.text(arq.read_text(encoding="utf-8"))
-                st.download_button(
-                    "⬇️ Baixar",
-                    data=arq.read_bytes(),
-                    file_name=arq.name,
-                    key=f"dl_{arq.name}",
-                )
+                st.download_button("⬇️ Baixar", data=arq.read_bytes(),
+                                   file_name=arq.name, key=f"dl_{arq.name}")

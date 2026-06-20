@@ -1,0 +1,71 @@
+id_pedido,especialidade,idade_paciente,resumo_clinico,sinais_alarme,tempo_espera_horas,completude_pedido_pct,urgencia_real
+IC0066,Endocrinologia,50,"Glicemia 480, confusao mental, desidratacao, respiracao rapida.",sim,8,46,urgente
+IC0013,Nefrologia,35,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,24,50,prioritario
+IC0031,Dermatologia,38,Lesao pigmentada que cresceu e mudou de cor em 2 meses.,nao,24,84,prioritario
+IC0033,Psiquiatria,43,"Ideacao suicida ativa com plano, paciente agitado, sem rede de apoio.",sim,3,25,urgente
+IC0024,Cardiologia,51,"Dor toracica em aperto ha 1h, irradia para braco esquerdo, sudorese, PA 90x60.",sim,24,96,urgente
+IC0002,Psiquiatria,66,"Ideacao suicida ativa com plano, paciente agitado, sem rede de apoio.",sim,8,56,urgente
+IC0015,Cardiologia,59,"DM2 controlado, deseja segunda opiniao sobre ajuste de medicacao.",nao,96,75,eletivo
+IC0063,Endocrinologia,23,"Hipotireoidismo em acompanhamento, TSH levemente alterado em rotina.",sim,96,83,eletivo
+IC0035,Ortopedia,41,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,24,39,eletivo
+IC0004,Dermatologia,64,"Acne leve a moderada, sem sinais de alarme, ha 6 meses.",nao,24,64,eletivo
+IC0019,Ginecologia,72,"Revisao de rotina, exames normais, sem queixas agudas.",nao,24,86,eletivo
+IC0061,Nefrologia,45,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,12,61,prioritario
+IC0030,Endocrinologia,31,"Glicemia 480, confusao mental, desidratacao, respiracao rapida.",sim,1,56,urgente
+IC0016,Dermatologia,43,Lesao pigmentada que cresceu e mudou de cor em 2 meses.,nao,24,95,prioritario
+IC0012,Cardiologia,68,"Dor toracica em aperto ha 1h, irradia para braco esquerdo, sudorese, PA 90x60.",sim,8,67,urgente
+IC0017,Cirurgia,77,"Dor abdominal intensa em FID, defesa, febre, vomitos ha 12h.",nao,24,33,urgente
+IC0038,Ginecologia,56,"Revisao de rotina, exames normais, sem queixas agudas.",nao,72,42,eletivo
+IC0043,Ortopedia,82,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,48,87,eletivo
+IC0052,Endocrinologia,90,"Hipotireoidismo em acompanhamento, TSH levemente alterado em rotina.",nao,48,93,eletivo
+IC0057,Nutricao,75,"Orientacao nutricional para perda de peso, sem comorbidade aguda.",sim,96,36,eletivo
+IC0022,Ginecologia,63,"Revisao de rotina, exames normais, sem queixas agudas.",nao,72,97,eletivo
+IC0054,Ginecologia,30,"Revisao de rotina, exames normais, sem queixas agudas.",nao,96,77,eletivo
+IC0020,Ortopedia,82,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,96,78,eletivo
+IC0065,Gastroenterologia,34,"Emagrecimento de 8kg em 2 meses, disfagia progressiva.",nao,12,60,prioritario
+IC0045,Neurologia,46,"Cefaleia recorrente ha 1 mes, piora matinal, sem deficit focal.",nao,12,83,prioritario
+IC0003,Endocrinologia,52,"Hipotireoidismo em acompanhamento, TSH levemente alterado em rotina.",nao,96,44,eletivo
+IC0032,Nefrologia,41,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,24,75,prioritario
+IC0062,Dermatologia,34,Lesao pigmentada que cresceu e mudou de cor em 2 meses.,nao,24,68,prioritario
+IC0036,Nefrologia,85,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,12,74,prioritario
+IC0055,Dermatologia,34,"Acne leve a moderada, sem sinais de alarme, ha 6 meses.",nao,24,43,eletivo
+IC0026,Cardiologia,62,"DM2 controlado, deseja segunda opiniao sobre ajuste de medicacao.",nao,72,62,eletivo
+IC0021,Neurologia,86,"Cefaleia recorrente ha 1 mes, piora matinal, sem deficit focal.",nao,72,38,prioritario
+IC0028,Nefrologia,44,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,12,37,prioritario
+IC0047,Dermatologia,87,"Acne leve a moderada, sem sinais de alarme, ha 6 meses.",nao,24,81,eletivo
+IC0025,Ortopedia,46,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,48,100,eletivo
+IC0008,Ortopedia,49,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,24,73,eletivo
+IC0059,Dermatologia,18,"Acne leve a moderada, sem sinais de alarme, ha 6 meses.",nao,96,36,eletivo
+IC0007,Psiquiatria,59,"Ideacao suicida ativa com plano, paciente agitado, sem rede de apoio.",sim,3,35,urgente
+IC0006,Ortopedia,70,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,24,95,eletivo
+IC0046,Nutricao,88,"Orientacao nutricional para perda de peso, sem comorbidade aguda.",nao,72,59,eletivo
+IC0067,Cirurgia,57,"Dor abdominal intensa em FID, defesa, febre, vomitos ha 12h.",sim,24,79,urgente
+IC0051,Ortopedia,72,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,24,51,eletivo
+IC0027,Cardiologia,32,"Dor toracica aos esforcos ha 2 semanas, melhora com repouso, HAS e DM2.",nao,48,69,prioritario
+IC0060,Nutricao,63,"Orientacao nutricional para perda de peso, sem comorbidade aguda.",nao,96,75,eletivo
+IC0068,Ginecologia,30,"Revisao de rotina, exames normais, sem queixas agudas.",sim,72,41,eletivo
+IC0069,Ortopedia,74,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",sim,72,40,eletivo
+IC0023,Ginecologia,69,"Revisao de rotina, exames normais, sem queixas agudas.",nao,48,80,eletivo
+IC0029,Gastroenterologia,75,"Emagrecimento de 8kg em 2 meses, disfagia progressiva.",nao,12,39,prioritario
+IC0011,Ginecologia,81,"Revisao de rotina, exames normais, sem queixas agudas.",nao,24,38,eletivo
+IC0058,Gastroenterologia,53,"Emagrecimento de 8kg em 2 meses, disfagia progressiva.",nao,48,83,prioritario
+IC0040,Nefrologia,35,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,24,87,prioritario
+IC0001,Nutricao,47,"Orientacao nutricional para perda de peso, sem comorbidade aguda.",nao,120,80,eletivo
+IC0037,Ortopedia,32,"Dor no joelho ao correr ha meses, melhora com repouso, sem trauma.",nao,96,47,eletivo
+IC0034,Cardiologia,53,"DM2 controlado, deseja segunda opiniao sobre ajuste de medicacao.",nao,96,33,eletivo
+IC0005,Neurologia,31,"Cefaleia recorrente ha 1 mes, piora matinal, sem deficit focal.",nao,12,82,prioritario
+IC0010,Nefrologia,56,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,6,57,prioritario
+IC0044,Nefrologia,80,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,24,53,prioritario
+IC0042,Pneumologia,24,"Dispneia importante, satO2 86%, cianose de extremidades, febre.",nao,8,49,urgente
+IC0009,Endocrinologia,56,"Glicemia 480, confusao mental, desidratacao, respiracao rapida.",sim,1,46,urgente
+IC0056,Cardiologia,68,"DM2 controlado, deseja segunda opiniao sobre ajuste de medicacao.",nao,72,59,eletivo
+IC0064,Neurologia,74,"Cefaleia subita de forte intensidade, pior da vida, rigidez de nuca, vomito.",sim,48,79,urgente
+IC0053,Cirurgia,55,"Dor abdominal intensa em FID, defesa, febre, vomitos ha 12h.",sim,3,90,urgente
+IC0050,Cardiologia,48,"Dor toracica aos esforcos ha 2 semanas, melhora com repouso, HAS e DM2.",nao,48,69,prioritario
+IC0049,Cardiologia,75,"Dor toracica aos esforcos ha 2 semanas, melhora com repouso, HAS e DM2.",nao,48,36,prioritario
+IC0018,Nutricao,81,"Orientacao nutricional para perda de peso, sem comorbidade aguda.",nao,48,57,eletivo
+IC0039,Endocrinologia,57,"Glicemia de jejum entre 200-300 nas ultimas semanas, polidipsia.",nao,12,43,prioritario
+IC0048,Nefrologia,31,"Creatinina subindo em 3 exames, edema de membros, HAS de dificil controle.",nao,24,56,prioritario
+IC0041,Ginecologia,40,"Revisao de rotina, exames normais, sem queixas agudas.",nao,72,42,eletivo
+IC0070,Nutricao,34,"Orientacao nutricional para perda de peso, sem comorbidade aguda.",nao,48,36,eletivo
+IC0014,Endocrinologia,68,"Glicemia de jejum entre 200-300 nas ultimas semanas, polidipsia.",nao,12,87,prioritario

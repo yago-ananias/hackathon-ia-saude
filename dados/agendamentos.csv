@@ -1,0 +1,201 @@
+id_paciente,idade,sexo,especialidade,tipo_consulta,dias_antecedencia,canal_preferido,historico_noshow_6m,regiao,periodo,dia_semana,confirmou_presenca,compareceu
+P0001,22,F,Ginecologia,primeira_vez,2,WhatsApp,1,capital,noite,qui,sim,nao
+P0002,37,F,Nutricao,primeira_vez,15,WhatsApp,0,capital,manha,ter,nao,nao
+P0003,27,F,Ortopedia,primeira_vez,7,WhatsApp,0,capital,manha,sab,sim,nao
+P0004,56,F,Nutricao,primeira_vez,15,E-mail,0,capital,manha,seg,nao,sim
+P0005,18,F,Dermatologia,primeira_vez,7,E-mail,0,capital,noite,qua,nao,sim
+P0006,17,F,Nutricao,retorno,3,WhatsApp,3,interior,noite,ter,nao,sim
+P0007,15,F,Cardiologia,retorno,7,WhatsApp,2,capital,noite,qua,sim,sim
+P0008,66,F,Ginecologia,primeira_vez,21,WhatsApp,1,capital,noite,qui,sim,sim
+P0009,25,M,Dermatologia,retorno,30,WhatsApp,0,interior,noite,seg,sim,sim
+P0010,67,M,Nutricao,retorno,1,SMS,1,capital,tarde,sab,sim,sim
+P0011,28,M,Cardiologia,retorno,30,WhatsApp,0,capital,manha,sab,sim,sim
+P0012,85,F,Clinica Medica,primeira_vez,3,Ligacao,2,interior,noite,qua,sim,nao
+P0013,54,M,Endocrinologia,primeira_vez,30,Ligacao,0,capital,manha,sex,nao,nao
+P0014,68,F,Ginecologia,retorno,10,Ligacao,2,interior,noite,ter,nao,nao
+P0015,55,M,Nutricao,retorno,5,WhatsApp,0,capital,noite,ter,sim,sim
+P0016,15,F,Dermatologia,retorno,30,WhatsApp,0,interior,manha,sex,sim,sim
+P0017,81,M,Endocrinologia,retorno,21,WhatsApp,0,capital,tarde,qui,sim,sim
+P0018,20,F,Pediatria,retorno,21,WhatsApp,0,capital,manha,qui,sim,sim
+P0019,17,M,Nutricao,primeira_vez,15,WhatsApp,0,capital,manha,ter,sim,sim
+P0020,59,F,Clinica Medica,primeira_vez,30,WhatsApp,1,capital,tarde,sab,nao,sim
+P0021,79,M,Clinica Medica,primeira_vez,3,WhatsApp,1,capital,tarde,seg,sim,sim
+P0022,75,F,Cardiologia,retorno,2,WhatsApp,1,interior,manha,qui,sim,sim
+P0023,39,F,Dermatologia,retorno,10,WhatsApp,3,capital,noite,qua,sim,nao
+P0024,46,M,Ortopedia,retorno,30,WhatsApp,1,capital,manha,seg,sim,sim
+P0025,24,M,Dermatologia,retorno,7,WhatsApp,2,interior,noite,sab,sim,sim
+P0026,78,M,Dermatologia,retorno,2,WhatsApp,0,capital,tarde,qua,sim,sim
+P0027,34,M,Nutricao,retorno,30,E-mail,0,capital,tarde,seg,sim,sim
+P0028,41,F,Psiquiatria,retorno,7,WhatsApp,0,interior,manha,sex,sim,sim
+P0029,78,F,Pediatria,primeira_vez,5,E-mail,1,interior,tarde,ter,nao,sim
+P0030,53,M,Clinica Medica,retorno,3,WhatsApp,1,capital,tarde,seg,sim,sim
+P0031,60,F,Ginecologia,primeira_vez,15,WhatsApp,0,capital,manha,qui,sim,sim
+P0032,37,F,Cardiologia,retorno,7,WhatsApp,0,interior,tarde,sab,sim,sim
+P0033,76,M,Cardiologia,primeira_vez,30,WhatsApp,3,capital,manha,sex,sim,sim
+P0034,48,M,Nutricao,primeira_vez,30,WhatsApp,0,capital,noite,sex,nao,sim
+P0035,33,M,Pediatria,primeira_vez,15,WhatsApp,0,interior,noite,qua,sim,sim
+P0036,49,M,Ginecologia,retorno,3,SMS,0,interior,manha,sex,sim,sim
+P0037,8,M,Ginecologia,primeira_vez,21,SMS,0,capital,noite,ter,sim,sim
+P0038,29,F,Ginecologia,retorno,15,WhatsApp,2,interior,noite,qua,sim,nao
+P0039,11,F,Endocrinologia,retorno,10,E-mail,0,interior,noite,ter,nao,sim
+P0040,59,F,Clinica Medica,retorno,1,E-mail,1,capital,tarde,ter,sim,sim
+P0041,74,M,Cardiologia,retorno,30,WhatsApp,0,capital,noite,sex,sim,sim
+P0042,64,M,Nutricao,retorno,3,E-mail,0,interior,noite,qua,nao,sim
+P0043,88,F,Ginecologia,retorno,15,WhatsApp,0,interior,manha,ter,sim,sim
+P0044,27,F,Dermatologia,retorno,5,WhatsApp,0,interior,tarde,sex,nao,nao
+P0045,81,M,Psiquiatria,primeira_vez,5,E-mail,2,interior,tarde,sex,nao,nao
+P0046,85,F,Psiquiatria,primeira_vez,7,WhatsApp,0,interior,tarde,sab,sim,sim
+P0047,24,F,Pediatria,retorno,15,WhatsApp,0,interior,manha,seg,sim,sim
+P0048,66,M,Ortopedia,retorno,7,E-mail,2,capital,manha,qui,sim,sim
+P0049,52,F,Dermatologia,retorno,15,E-mail,3,capital,manha,sex,sim,nao
+P0050,22,F,Psiquiatria,retorno,21,WhatsApp,1,interior,manha,ter,nao,nao
+P0051,11,M,Pediatria,primeira_vez,15,WhatsApp,1,interior,manha,sab,nao,sim
+P0052,84,F,Cardiologia,primeira_vez,7,WhatsApp,0,capital,tarde,qui,sim,sim
+P0053,66,F,Pediatria,primeira_vez,10,SMS,1,interior,tarde,qui,sim,sim
+P0054,42,M,Endocrinologia,retorno,2,E-mail,0,capital,noite,sab,sim,nao
+P0055,49,F,Psiquiatria,primeira_vez,21,WhatsApp,2,interior,tarde,sex,sim,sim
+P0056,18,F,Pediatria,retorno,21,SMS,1,capital,manha,seg,sim,sim
+P0057,39,M,Ortopedia,retorno,10,WhatsApp,1,capital,noite,qui,sim,sim
+P0058,23,F,Ortopedia,primeira_vez,10,E-mail,0,capital,tarde,qua,nao,sim
+P0059,75,M,Dermatologia,retorno,5,WhatsApp,0,interior,manha,qua,sim,nao
+P0060,45,F,Psiquiatria,primeira_vez,1,WhatsApp,0,capital,manha,qua,nao,sim
+P0061,16,M,Psiquiatria,primeira_vez,15,WhatsApp,0,capital,tarde,seg,nao,nao
+P0062,61,F,Nutricao,primeira_vez,30,WhatsApp,1,capital,noite,sex,sim,sim
+P0063,20,F,Endocrinologia,primeira_vez,2,WhatsApp,1,capital,tarde,qui,nao,nao
+P0064,12,F,Ginecologia,retorno,15,WhatsApp,1,interior,noite,sex,nao,sim
+P0065,62,F,Nutricao,primeira_vez,3,WhatsApp,0,capital,tarde,sex,nao,sim
+P0066,44,M,Dermatologia,retorno,5,WhatsApp,0,capital,tarde,seg,sim,sim
+P0067,49,M,Cardiologia,primeira_vez,30,E-mail,1,interior,noite,qua,sim,sim
+P0068,30,M,Nutricao,retorno,30,WhatsApp,1,interior,tarde,seg,sim,sim
+P0069,49,F,Clinica Medica,primeira_vez,15,WhatsApp,3,interior,noite,seg,sim,nao
+P0070,49,F,Pediatria,retorno,21,WhatsApp,2,capital,manha,ter,sim,sim
+P0071,71,M,Cardiologia,primeira_vez,10,Ligacao,0,interior,manha,seg,nao,sim
+P0072,38,F,Ginecologia,retorno,10,WhatsApp,3,interior,tarde,seg,sim,nao
+P0073,45,M,Pediatria,retorno,30,WhatsApp,1,capital,noite,sex,nao,nao
+P0074,16,M,Pediatria,primeira_vez,21,WhatsApp,0,interior,noite,sex,nao,nao
+P0075,27,M,Nutricao,retorno,5,E-mail,0,interior,manha,sab,sim,sim
+P0076,60,F,Ortopedia,retorno,15,E-mail,0,interior,noite,ter,sim,nao
+P0077,72,M,Dermatologia,retorno,7,WhatsApp,0,interior,tarde,sab,nao,nao
+P0078,41,M,Pediatria,retorno,30,E-mail,2,capital,tarde,sab,nao,sim
+P0079,77,F,Dermatologia,primeira_vez,15,WhatsApp,0,capital,manha,sab,nao,nao
+P0080,29,M,Cardiologia,primeira_vez,21,WhatsApp,0,capital,noite,qui,sim,sim
+P0081,29,F,Dermatologia,retorno,7,SMS,0,capital,manha,qui,sim,sim
+P0082,9,M,Ginecologia,retorno,3,WhatsApp,0,capital,noite,qui,nao,sim
+P0083,46,F,Pediatria,retorno,2,WhatsApp,0,capital,noite,qua,sim,sim
+P0084,58,M,Cardiologia,retorno,15,SMS,0,interior,tarde,qua,nao,nao
+P0085,53,F,Endocrinologia,retorno,15,SMS,1,interior,noite,seg,nao,sim
+P0086,47,M,Cardiologia,retorno,15,WhatsApp,0,interior,manha,ter,sim,sim
+P0087,54,M,Clinica Medica,primeira_vez,21,WhatsApp,2,interior,tarde,seg,sim,nao
+P0088,36,M,Nutricao,primeira_vez,21,WhatsApp,0,capital,noite,sab,nao,sim
+P0089,55,F,Endocrinologia,retorno,10,Ligacao,0,interior,noite,seg,sim,sim
+P0090,46,M,Dermatologia,primeira_vez,30,WhatsApp,0,capital,noite,ter,sim,sim
+P0091,77,M,Clinica Medica,retorno,15,E-mail,1,interior,tarde,seg,nao,nao
+P0092,64,F,Ortopedia,primeira_vez,15,WhatsApp,3,capital,tarde,qua,sim,nao
+P0093,66,F,Endocrinologia,retorno,10,WhatsApp,1,capital,manha,sex,sim,sim
+P0094,78,F,Endocrinologia,retorno,3,E-mail,1,capital,tarde,ter,nao,sim
+P0095,30,F,Cardiologia,primeira_vez,5,E-mail,1,capital,tarde,seg,sim,sim
+P0096,22,F,Psiquiatria,retorno,7,SMS,0,capital,noite,seg,nao,sim
+P0097,74,M,Psiquiatria,retorno,1,Ligacao,2,capital,manha,qui,nao,nao
+P0098,18,M,Clinica Medica,primeira_vez,5,SMS,0,capital,noite,sex,sim,sim
+P0099,63,F,Dermatologia,retorno,15,E-mail,1,capital,tarde,ter,sim,sim
+P0100,59,M,Dermatologia,primeira_vez,5,WhatsApp,3,interior,tarde,seg,sim,nao
+P0101,63,F,Ortopedia,retorno,10,SMS,1,capital,manha,qui,sim,sim
+P0102,62,F,Ginecologia,retorno,5,SMS,0,interior,manha,seg,sim,sim
+P0103,22,M,Endocrinologia,retorno,30,Ligacao,2,interior,noite,sex,sim,sim
+P0104,42,F,Clinica Medica,primeira_vez,21,Ligacao,0,capital,manha,sex,nao,nao
+P0105,11,F,Nutricao,primeira_vez,7,WhatsApp,0,interior,noite,sex,sim,nao
+P0106,28,F,Dermatologia,primeira_vez,15,WhatsApp,0,capital,noite,seg,sim,nao
+P0107,83,M,Nutricao,retorno,1,WhatsApp,1,capital,tarde,ter,nao,sim
+P0108,45,M,Dermatologia,primeira_vez,21,WhatsApp,0,interior,noite,sex,nao,sim
+P0109,17,M,Cardiologia,retorno,7,WhatsApp,0,capital,tarde,sab,sim,sim
+P0110,59,F,Ortopedia,primeira_vez,30,WhatsApp,1,capital,tarde,seg,sim,sim
+P0111,75,F,Pediatria,retorno,21,WhatsApp,1,capital,noite,seg,sim,nao
+P0112,52,M,Clinica Medica,primeira_vez,3,WhatsApp,1,interior,noite,seg,sim,sim
+P0113,71,M,Psiquiatria,retorno,30,SMS,3,capital,noite,qua,sim,nao
+P0114,64,M,Ginecologia,retorno,5,WhatsApp,0,capital,tarde,qua,sim,sim
+P0115,19,M,Psiquiatria,retorno,30,SMS,0,interior,noite,sab,sim,sim
+P0116,72,F,Cardiologia,retorno,21,E-mail,3,capital,noite,ter,sim,sim
+P0117,64,F,Ortopedia,primeira_vez,5,WhatsApp,0,capital,noite,sab,sim,sim
+P0118,79,M,Ginecologia,primeira_vez,30,Ligacao,1,capital,manha,sex,nao,sim
+P0119,47,M,Clinica Medica,retorno,30,WhatsApp,0,interior,manha,sab,nao,sim
+P0120,75,F,Pediatria,retorno,1,WhatsApp,3,capital,tarde,ter,sim,nao
+P0121,17,M,Dermatologia,retorno,10,SMS,0,interior,noite,ter,sim,nao
+P0122,31,F,Psiquiatria,primeira_vez,7,SMS,3,interior,noite,qui,sim,nao
+P0123,68,F,Ortopedia,retorno,10,WhatsApp,1,interior,noite,sex,sim,nao
+P0124,33,F,Ginecologia,primeira_vez,7,WhatsApp,3,interior,noite,seg,sim,sim
+P0125,42,M,Nutricao,primeira_vez,7,Ligacao,0,capital,tarde,seg,sim,sim
+P0126,55,F,Pediatria,retorno,7,WhatsApp,3,interior,noite,qua,nao,nao
+P0127,44,M,Clinica Medica,retorno,7,SMS,2,capital,manha,ter,sim,sim
+P0128,75,M,Dermatologia,retorno,3,WhatsApp,0,interior,noite,qui,sim,sim
+P0129,71,F,Nutricao,retorno,15,WhatsApp,0,capital,noite,qui,sim,sim
+P0130,75,M,Dermatologia,retorno,10,E-mail,0,capital,tarde,seg,sim,sim
+P0131,40,F,Ortopedia,retorno,5,SMS,1,interior,noite,qua,sim,sim
+P0132,51,F,Psiquiatria,retorno,7,WhatsApp,0,interior,tarde,seg,sim,nao
+P0133,33,F,Ortopedia,retorno,10,Ligacao,0,capital,noite,ter,sim,sim
+P0134,14,M,Ginecologia,primeira_vez,7,E-mail,1,interior,tarde,qua,nao,nao
+P0135,71,M,Nutricao,primeira_vez,2,WhatsApp,0,interior,manha,sex,sim,nao
+P0136,49,M,Ginecologia,retorno,15,WhatsApp,0,capital,noite,qua,sim,sim
+P0137,15,F,Pediatria,primeira_vez,21,SMS,3,capital,noite,sab,nao,nao
+P0138,16,F,Ortopedia,primeira_vez,30,WhatsApp,0,capital,tarde,qua,sim,nao
+P0139,25,M,Pediatria,primeira_vez,5,Ligacao,0,capital,noite,qui,nao,nao
+P0140,41,M,Endocrinologia,retorno,5,Ligacao,0,capital,manha,qui,sim,sim
+P0141,19,M,Ortopedia,retorno,10,WhatsApp,0,capital,noite,sab,sim,sim
+P0142,73,F,Dermatologia,retorno,21,WhatsApp,0,capital,noite,qua,sim,sim
+P0143,24,F,Dermatologia,primeira_vez,30,SMS,0,interior,noite,seg,sim,nao
+P0144,17,M,Psiquiatria,retorno,5,E-mail,1,interior,manha,ter,sim,sim
+P0145,15,F,Nutricao,primeira_vez,3,WhatsApp,1,capital,noite,qua,nao,nao
+P0146,78,M,Clinica Medica,retorno,10,WhatsApp,1,capital,noite,ter,sim,sim
+P0147,85,M,Cardiologia,retorno,1,WhatsApp,1,capital,noite,ter,nao,sim
+P0148,11,M,Nutricao,primeira_vez,30,WhatsApp,2,interior,tarde,qui,sim,nao
+P0149,64,M,Psiquiatria,retorno,5,WhatsApp,2,capital,tarde,qui,sim,sim
+P0150,79,F,Ortopedia,primeira_vez,2,WhatsApp,0,capital,tarde,sex,sim,sim
+P0151,28,M,Ortopedia,primeira_vez,3,Ligacao,0,interior,tarde,seg,sim,sim
+P0152,66,F,Endocrinologia,retorno,1,WhatsApp,1,interior,noite,qui,sim,nao
+P0153,21,M,Clinica Medica,retorno,15,E-mail,0,capital,noite,sex,sim,sim
+P0154,17,M,Nutricao,retorno,10,E-mail,1,interior,manha,seg,sim,sim
+P0155,51,M,Clinica Medica,primeira_vez,10,WhatsApp,0,capital,tarde,qui,sim,sim
+P0156,73,F,Ortopedia,retorno,5,WhatsApp,1,interior,noite,qua,sim,sim
+P0157,70,M,Psiquiatria,retorno,7,SMS,3,capital,noite,sab,sim,sim
+P0158,41,F,Cardiologia,retorno,3,SMS,1,interior,manha,sab,sim,sim
+P0159,22,F,Cardiologia,retorno,7,WhatsApp,0,capital,noite,qui,nao,sim
+P0160,15,F,Nutricao,primeira_vez,5,SMS,0,capital,manha,qui,nao,nao
+P0161,53,M,Psiquiatria,primeira_vez,5,SMS,0,interior,tarde,qua,nao,sim
+P0162,70,M,Psiquiatria,primeira_vez,30,E-mail,0,capital,noite,sex,sim,sim
+P0163,52,F,Ginecologia,primeira_vez,30,WhatsApp,2,interior,noite,qui,sim,sim
+P0164,42,M,Clinica Medica,primeira_vez,21,WhatsApp,0,interior,manha,sab,sim,nao
+P0165,50,M,Dermatologia,retorno,2,Ligacao,3,capital,noite,qui,sim,nao
+P0166,44,M,Ginecologia,retorno,30,WhatsApp,1,capital,noite,seg,nao,nao
+P0167,30,F,Pediatria,retorno,3,SMS,2,capital,manha,seg,sim,sim
+P0168,50,M,Psiquiatria,retorno,10,WhatsApp,3,interior,tarde,qua,sim,nao
+P0169,28,M,Ginecologia,retorno,1,WhatsApp,0,interior,manha,ter,sim,sim
+P0170,59,M,Nutricao,primeira_vez,7,WhatsApp,3,capital,manha,seg,sim,nao
+P0171,42,M,Ginecologia,retorno,10,WhatsApp,0,capital,noite,seg,sim,sim
+P0172,72,M,Dermatologia,retorno,30,WhatsApp,0,interior,tarde,ter,sim,sim
+P0173,55,M,Nutricao,retorno,21,E-mail,2,interior,noite,sex,nao,nao
+P0174,65,M,Dermatologia,retorno,2,E-mail,2,capital,noite,ter,sim,sim
+P0175,64,F,Endocrinologia,retorno,7,E-mail,0,capital,manha,sex,sim,sim
+P0176,79,M,Ginecologia,retorno,7,E-mail,1,capital,manha,qui,sim,nao
+P0177,15,F,Psiquiatria,primeira_vez,7,E-mail,1,interior,noite,qui,sim,sim
+P0178,65,M,Pediatria,primeira_vez,30,E-mail,0,interior,manha,ter,nao,nao
+P0179,24,F,Cardiologia,retorno,30,WhatsApp,1,capital,tarde,ter,sim,sim
+P0180,43,F,Dermatologia,primeira_vez,15,SMS,3,interior,manha,ter,sim,nao
+P0181,65,F,Endocrinologia,retorno,7,WhatsApp,0,interior,manha,ter,sim,sim
+P0182,81,M,Ortopedia,primeira_vez,30,Ligacao,0,capital,tarde,seg,sim,sim
+P0183,30,M,Nutricao,retorno,30,Ligacao,1,interior,tarde,sab,sim,nao
+P0184,56,F,Nutricao,retorno,30,WhatsApp,1,interior,manha,sex,sim,sim
+P0185,75,F,Pediatria,primeira_vez,3,SMS,2,interior,manha,sex,nao,nao
+P0186,42,M,Cardiologia,retorno,3,E-mail,1,capital,tarde,ter,nao,nao
+P0187,9,F,Endocrinologia,retorno,2,Ligacao,0,capital,noite,sab,sim,sim
+P0188,78,M,Ginecologia,primeira_vez,10,WhatsApp,0,capital,tarde,qui,sim,sim
+P0189,68,M,Endocrinologia,primeira_vez,7,SMS,0,capital,tarde,sex,nao,sim
+P0190,61,M,Clinica Medica,primeira_vez,3,SMS,0,capital,noite,qua,sim,sim
+P0191,70,M,Clinica Medica,retorno,5,WhatsApp,0,capital,noite,sab,nao,sim
+P0192,17,F,Cardiologia,retorno,30,WhatsApp,1,capital,noite,qui,sim,sim
+P0193,86,M,Psiquiatria,primeira_vez,10,WhatsApp,0,interior,noite,qua,sim,sim
+P0194,63,F,Dermatologia,retorno,10,WhatsApp,1,capital,tarde,qua,nao,nao
+P0195,59,M,Endocrinologia,retorno,3,SMS,2,interior,noite,seg,sim,sim
+P0196,78,M,Cardiologia,retorno,15,WhatsApp,2,interior,tarde,sex,nao,sim
+P0197,75,F,Endocrinologia,primeira_vez,30,E-mail,0,capital,manha,sab,nao,sim
+P0198,80,F,Clinica Medica,retorno,5,Ligacao,1,interior,noite,qui,nao,nao
+P0199,80,F,Pediatria,retorno,10,WhatsApp,1,interior,noite,sab,sim,sim
+P0200,52,F,Dermatologia,retorno,21,WhatsApp,1,interior,tarde,qua,sim,nao
