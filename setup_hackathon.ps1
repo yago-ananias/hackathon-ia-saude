@@ -78,6 +78,9 @@ Write-Host "============================================================" -Foreg
 Write-Host "  SETUP CONCLUIDO!" -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor Green
 Write-Host ""
+Write-Host "OPCIONAL - para a aba de Transcricao de voz (Whisper), rode depois:" -ForegroundColor Gray
+Write-Host "  pip install faster-whisper" -ForegroundColor White
+Write-Host ""
 Write-Host "Para iniciar o app do hackathon, execute:" -ForegroundColor Cyan
 Write-Host "  streamlit run app_hackathon.py" -ForegroundColor White
 Write-Host ""

@@ -15,6 +15,7 @@ Recursos:
 import sys
 import json
 import time
+import tempfile
 import requests
 import pandas as pd
 import streamlit as st
@@ -26,6 +27,13 @@ sys.stdout.reconfigure(encoding="utf-8")
 BASE = Path(__file__).parent
 OUTPUT_DIR = BASE / "output"
 DADOS_DIR = BASE / "dados"
+
+# Transcricao de audio (opcional) - so ativa se faster-whisper estiver instalado
+try:
+    from faster_whisper import WhisperModel
+    WHISPER_OK = True
+except Exception:
+    WHISPER_OK = False
 
 # -------------------------------------------------------------------
 # Configuracao da pagina
@@ -81,16 +89,36 @@ def carregar_csv(nome: str):
         return pd.read_csv(caminho)
     return None
 
+
+def taxa_noshow_por(df, coluna):
+    """Serie com a taxa de no-show (%) por categoria de uma coluna."""
+    return (df.groupby(coluna)["compareceu"]
+              .apply(lambda s: round((s == "nao").mean() * 100, 1))
+              .sort_values(ascending=False))
+
+
+@st.cache_resource
+def carregar_whisper(tamanho: str = "base"):
+    """Carrega o modelo Whisper (cacheado). int8 para rodar leve em CPU."""
+    return WhisperModel(tamanho, device="cpu", compute_type="int8")
+
 # -------------------------------------------------------------------
 # Integracao com Ollama
 # -------------------------------------------------------------------
+PREFERENCIA = ["medgemma:4b", "gemma4:e2b"]  # recomendados aparecem primeiro
+
+
 def listar_modelos(url_base: str):
-    """Detecta modelos instalados no Ollama. Cai no fallback se offline."""
+    """Detecta modelos instalados no Ollama (recomendados primeiro). Fallback se offline."""
     try:
         r = requests.get(f"{url_base}/api/tags", timeout=5)
         if r.status_code == 200:
             nomes = [m["name"] for m in r.json().get("models", [])]
-            return nomes or FALLBACK_MODELOS
+            if nomes:
+                return sorted(
+                    nomes,
+                    key=lambda n: (PREFERENCIA.index(n) if n in PREFERENCIA else len(PREFERENCIA), n),
+                )
     except Exception:
         pass
     return FALLBACK_MODELOS
@@ -198,6 +226,40 @@ RESPOSTA DO MODELO:
     return str(path)
 
 
+def prompt_autoavaliacao(prompt_original: str, resposta: str) -> str:
+    """Monta um prompt que pede ao modelo para avaliar a resposta pela rubrica do hackathon."""
+    criterios = dados["config"].get("avaliacao", [])
+    linhas_crit = "\n".join(
+        f"- {c['criterio']} (peso {c['peso']}): {c['o_que_avaliar']}" for c in criterios
+    )
+    return (
+        "Voce e um jurado de hackathon de saude digital. Avalie a RESPOSTA abaixo segundo a rubrica.\n"
+        "Para cada criterio, de uma nota de 0 a 10 e uma justificativa de 1 linha. "
+        "No final, calcule a nota ponderada (0 a 10) e aponte a MELHORIA mais importante.\n\n"
+        f"RUBRICA:\n{linhas_crit}\n\n"
+        f"PROMPT QUE GEROU A RESPOSTA:\n{prompt_original}\n\n"
+        f"RESPOSTA A AVALIAR:\n{resposta}\n\n"
+        "Formato: tabela com Criterio | Nota | Justificativa, depois 'Nota final: X/10' e 'Melhoria prioritaria: ...'."
+    )
+
+
+def prompt_pitch(blocos: list, trilha: str, desafio: str) -> str:
+    """Monta um prompt para gerar o esqueleto do pitch a partir de respostas salvas."""
+    material = "\n\n---\n\n".join(blocos)
+    return (
+        "Voce e um mentor de pitch. Com base no material de trabalho abaixo (respostas que a equipe "
+        f"gerou para o desafio '{desafio}' da trilha '{trilha}'), monte o ESQUELETO de um pitch de 15 min.\n\n"
+        "Estruture exatamente nestas secoes, objetivo e pronto para apresentar:\n"
+        "1. Problema (a dor e a magnitude)\n"
+        "2. Solucao com IA (como funciona)\n"
+        "3. Dados e metricas (o que muda e como medir)\n"
+        "4. Riscos e mitigacoes (1 risco assistencial)\n"
+        "5. Proximos passos (o que fazer em 30 dias)\n"
+        "Use bullets curtos. Seja concreto e executivo.\n\n"
+        f"MATERIAL DE TRABALHO DA EQUIPE:\n{material}"
+    )
+
+
 # -------------------------------------------------------------------
 # Callbacks (forma correta de mexer em session_state sem erro)
 # -------------------------------------------------------------------
@@ -226,6 +288,10 @@ with st.sidebar:
         index=0,
         help="Lista detectada automaticamente do seu Ollama.",
     )
+
+    if "1.5" in modelo:
+        st.caption("⚠️ A MedGemma 1.5 expoe o raciocinio (em ingles) antes da resposta final. "
+                   "Boa para ver como a IA 'pensa'; para respostas limpas, use a medgemma:4b.")
 
     persona_nome = st.selectbox(
         "Persona (system prompt)",
@@ -279,12 +345,27 @@ def render_resposta(chave: str, trilha_label: str, desafio_label: str):
     st.markdown(res["resposta"])
     if res.get("metricas"):
         st.caption(f"⚡ {res['metricas']}  ·  modelo: `{res['modelo']}`")
-    if st.button("💾 Salvar resultado", key=f"save_{chave}"):
+
+    cbs1, cbs2, _ = st.columns([1.2, 1.6, 2])
+    with cbs1:
+        salvar = st.button("💾 Salvar", key=f"save_{chave}", use_container_width=True)
+    with cbs2:
+        avaliar = st.button("🧮 Autoavaliar pela rubrica", key=f"aval_{chave}", use_container_width=True)
+
+    if salvar:
         p = salvar_resultado(
             trilha_label, desafio_label, res["prompt"], res["resposta"],
             res.get("modelo", ""), res.get("system", ""), res.get("metricas", ""),
         )
         st.success(f"Salvo em: `{p}`")
+
+    if avaliar:
+        st.markdown("**🧮 Autoavaliacao pela rubrica do hackathon:**")
+        ph = st.empty()
+        ph.info("Avaliando...")
+        pa = prompt_autoavaliacao(res["prompt"], res["resposta"])
+        texto_av, _ = gerar_stream(pa, modelo, url_ollama, system_prompt, 0.2, ph)
+        ph.markdown(texto_av)
 
 
 def executar_e_guardar(chave: str, prompt: str, modelo: str, system: str,
@@ -396,10 +477,11 @@ def comparar_modelos(prompt: str, modelos: list, system: str, temperatura: float
 # ===================================================================
 # Tabs principais
 # ===================================================================
-aba_eletiva, aba_ti, aba_dados, aba_chat, aba_livre, aba_result = st.tabs([
+aba_eletiva, aba_ti, aba_dados, aba_voz, aba_chat, aba_livre, aba_result = st.tabs([
     "🩺 TeleEletiva",
     "🔄 TeleInterconsulta",
     "📊 Dados",
+    "🎙️ Transcricao",
     "💬 Chat / Refino",
     "✏️ Prompt Livre",
     "📁 Resultados",
@@ -420,7 +502,11 @@ with aba_dados:
     )
     st.caption("Nenhum dado real de paciente. Gerados por regras em `dados/gerar_dados_sinteticos.py`.")
 
-    sub_ag, sub_fila = st.tabs(["🩺 Agendamentos (no-show)", "🔄 Fila de Interconsulta (priorizacao)"])
+    sub_ag, sub_fila, sub_an = st.tabs([
+        "🩺 Agendamentos (no-show)",
+        "🔄 Fila de Interconsulta (priorizacao)",
+        "📈 Analytics no-show",
+    ])
 
     # ---- Agendamentos / no-show ----
     with sub_ag:
@@ -489,6 +575,93 @@ with aba_dados:
             with st.expander("👁️ Ver gabarito (urgencia_real) para comparar"):
                 st.dataframe(amostra[["id_pedido", "especialidade", "urgencia_real"]],
                              use_container_width=True)
+
+    # ---- Analytics de no-show ----
+    with sub_an:
+        df_a = carregar_csv("agendamentos.csv")
+        if df_a is None:
+            st.warning("Arquivo `dados/agendamentos.csv` nao encontrado. "
+                       "Rode: `python dados/gerar_dados_sinteticos.py`")
+        else:
+            df_a = df_a.copy()
+            df_a["faixa_antecedencia"] = pd.cut(
+                df_a["dias_antecedencia"], bins=[0, 3, 10, 100],
+                labels=["1-3 dias", "4-10 dias", "11+ dias"],
+            )
+            geral = (df_a["compareceu"] == "nao").mean() * 100
+            st.metric("Taxa de no-show geral", f"{geral:.1f}%")
+            st.markdown("**Qual fator mais prediz o no-show?** Compare a taxa por categoria:")
+
+            fatores = {
+                "confirmou_presenca": "Confirmou presenca?",
+                "historico_noshow_6m": "Historico de no-show (6m)",
+                "tipo_consulta": "Tipo de consulta",
+                "regiao": "Regiao",
+            }
+            col_e, col_d = st.columns(2)
+            for i, (col, titulo) in enumerate(fatores.items()):
+                serie = taxa_noshow_por(df_a, col)
+                alvo = col_e if i % 2 == 0 else col_d
+                with alvo:
+                    st.markdown(f"**{titulo}**")
+                    st.bar_chart(serie, height=200, color="#005DA0")
+
+            st.info("💡 Para o time TeleEletiva: estes sao os fatores que a IA poderia usar "
+                    "para priorizar quem recebe lembrete/confirmacao ativa. O maior preditor costuma "
+                    "ser o historico de no-show e a falta de confirmacao.")
+
+# ----------------------------- TRANSCRICAO (VOZ) -----------------------------
+with aba_voz:
+    st.header("🎙️ Transcricao de Teleconsulta")
+    st.markdown(
+        "Suba o **audio** de uma consulta (ficticia!) e a IA transcreve e gera uma **nota clinica**. "
+        "Fluxo: audio → Whisper (transcricao) → MedGemma (resumo estruturado)."
+    )
+    st.caption("Tudo roda local. Use apenas audios ficticios/de teste - nunca audio real de paciente.")
+
+    if not WHISPER_OK:
+        st.warning(
+            "Capacidade de transcricao **nao instalada**. Para ativar, rode no terminal:\n\n"
+            "```\npip install faster-whisper\n```\n\n"
+            "Depois reinicie o app. O modelo Whisper (~150 MB) baixa sozinho no primeiro uso."
+        )
+    else:
+        col_u, col_t = st.columns([3, 1])
+        with col_u:
+            audio = st.file_uploader("Audio da consulta", type=["wav", "mp3", "m4a", "ogg", "flac"])
+        with col_t:
+            tam = st.selectbox("Modelo Whisper", ["base", "small"], index=0,
+                               help="base = rapido. small = mais preciso, mais lento.")
+
+        if audio is not None:
+            st.audio(audio)
+            if st.button("📝 Transcrever", type="primary", key="run_voz"):
+                with tempfile.NamedTemporaryFile(delete=False, suffix=Path(audio.name).suffix) as tmp:
+                    tmp.write(audio.getvalue())
+                    caminho_tmp = tmp.name
+                with st.spinner(f"Transcrevendo com Whisper {tam} (pode levar 1-3 min em CPU)..."):
+                    modelo_w = carregar_whisper(tam)
+                    segmentos, info = modelo_w.transcribe(caminho_tmp, language="pt")
+                    texto_trans = " ".join(s.text.strip() for s in segmentos).strip()
+                st.session_state["transcricao"] = texto_trans
+                st.success(f"Transcricao concluida (idioma detectado: {info.language}).")
+
+        if st.session_state.get("transcricao"):
+            st.markdown("**Transcricao:**")
+            st.text_area("Texto transcrito (edite se quiser):", key="transcricao", height=160)
+            if st.button("🩺 Gerar nota clinica (MedGemma)", key="resumo_voz"):
+                pr = (
+                    "Voce e um assistente clinico. A partir da transcricao de uma teleconsulta abaixo, "
+                    "gere uma NOTA CLINICA estruturada em: 1) Queixa principal, 2) Historia da doenca atual, "
+                    "3) Hipoteses, 4) Conduta sugerida, 5) Retorno. Use linguagem tecnica e concisa. "
+                    "Se faltar informacao, registre 'nao informado'.\n\n"
+                    f"TRANSCRICAO:\n{st.session_state['transcricao']}"
+                )
+                st.markdown("**Nota clinica:**")
+                ph_v = st.empty()
+                ph_v.info("Gerando nota...")
+                txt_v, _ = gerar_stream(pr, modelo, url_ollama, system_prompt, 0.3, ph_v)
+                ph_v.markdown(txt_v)
 
 # ----------------------------- CHAT / MULTI-TURN -----------------------------
 with aba_chat:
@@ -572,6 +745,31 @@ with aba_result:
         st.info("Nenhum resultado salvo ainda. Execute um prompt e clique em 'Salvar resultado'.")
     else:
         st.metric("Total de resultados", len(arquivos))
+
+        # ---- Gerador de pitch ----
+        with st.expander("🎤 Gerar esqueleto de PITCH a partir dos resultados", expanded=True):
+            st.markdown("Selecione 1+ resultados que a equipe quer transformar em apresentacao.")
+            escolha = st.multiselect("Resultados:", [a.name for a in arquivos],
+                                     default=[arquivos[0].name], key="ms_pitch")
+            cpa, cpb = st.columns(2)
+            trilha_p = cpa.text_input("Trilha", value="TeleEletiva", key="pitch_trilha")
+            desafio_p = cpb.text_input("Desafio", value="", key="pitch_desafio",
+                                       placeholder="ex: Reduzir No-Show")
+            if st.button("🎤 Gerar pitch", type="primary", key="run_pitch"):
+                if not escolha:
+                    st.warning("Selecione pelo menos um resultado.")
+                else:
+                    blocos = [(OUTPUT_DIR / nome).read_text(encoding="utf-8") for nome in escolha]
+                    pp = prompt_pitch(blocos, trilha_p, desafio_p or "(desafio)")
+                    st.markdown("**Esqueleto do pitch:**")
+                    ph_pitch = st.empty()
+                    ph_pitch.info("Montando pitch...")
+                    texto_p, _ = gerar_stream(pp, modelo, url_ollama, system_prompt, 0.5, ph_pitch)
+                    ph_pitch.markdown(texto_p)
+                    st.download_button("⬇️ Baixar pitch (.md)", data=texto_p,
+                                       file_name="pitch_esqueleto.md", key="dl_pitch")
+
+        st.divider()
         for arq in arquivos:
             with st.expander(f"📄 {arq.name}"):
                 st.text(arq.read_text(encoding="utf-8"))

@@ -42,6 +42,7 @@ hackathon-ia-saude/
 │
 ├── 📊 dados/
 │   ├── gerar_dados_sinteticos.py   ← Gera os CSVs fictícios
+│   ├── analise_noshow.py           ← Análise estatística do no-show
 │   ├── agendamentos.csv            ← 200 agendamentos (no-show)
 │   └── fila_interconsulta.csv      ← 70 pedidos (priorização)
 │
@@ -58,6 +59,10 @@ hackathon-ia-saude/
 | **⚖️ Comparar 2 modelos** | Roda o mesmo prompt no MedGemma e no Gemma 4 lado a lado |
 | **💬 Chat / Refino** | Conversa multi-turn — a IA lembra do contexto (ensina iteração) |
 | **📊 Dados** | Usa os CSVs fictícios: classifica risco de no-show, prioriza fila |
+| **📈 Analytics** | Gráficos de quais fatores predizem o no-show (sub-aba em Dados) |
+| **🎙️ Transcrição** | Áudio de consulta → Whisper transcreve → MedGemma vira nota clínica (opcional: `pip install faster-whisper`) |
+| **🧮 Autoavaliação** | A IA pontua a própria resposta pela rubrica do hackathon |
+| **🎤 Gerador de pitch** | Monta o esqueleto da apresentação a partir dos resultados salvos |
 | **Métricas** | Mostra tokens/s e tempo a cada resposta |
 | **Salvar resultados** | Persiste a resposta e exporta `.txt` |
 
