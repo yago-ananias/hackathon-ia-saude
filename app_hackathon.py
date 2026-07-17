@@ -15,6 +15,7 @@ Recursos:
 import sys
 import json
 import time
+import base64
 import tempfile
 import requests
 import pandas as pd
@@ -136,8 +137,9 @@ def _metricas(chunk_final: dict, segundos: float) -> str:
 
 
 def gerar_stream(prompt: str, modelo: str, url_base: str, system: str = "",
-                 temperatura: float = 0.7, placeholder=None):
-    """Gera resposta via /api/generate com streaming. Retorna (texto, metricas)."""
+                 temperatura: float = 0.7, placeholder=None, imagens: list = None):
+    """Gera resposta via /api/generate com streaming. Retorna (texto, metricas).
+    imagens: lista de strings base64 (para modelos com visao, ex: medgemma)."""
     payload = {
         "model": modelo,
         "prompt": prompt,
@@ -146,6 +148,8 @@ def gerar_stream(prompt: str, modelo: str, url_base: str, system: str = "",
     }
     if system:
         payload["system"] = system
+    if imagens:
+        payload["images"] = imagens
     return _consumir_stream(f"{url_base}/api/generate", payload, placeholder, "response")
 
 
@@ -478,11 +482,12 @@ def comparar_modelos(prompt: str, modelos: list, system: str, temperatura: float
 # ===================================================================
 # Tabs principais
 # ===================================================================
-aba_eletiva, aba_ti, aba_dados, aba_voz, aba_chat, aba_livre, aba_result = st.tabs([
+aba_eletiva, aba_ti, aba_dados, aba_voz, aba_img, aba_chat, aba_livre, aba_result = st.tabs([
     "🩺 TeleEletiva",
     "🔄 TeleInterconsulta",
     "📊 Dados",
     "🎙️ Transcricao",
+    "🖼️ Imagem",
     "💬 Chat / Refino",
     "✏️ Prompt Livre",
     "📁 Resultados",
@@ -663,6 +668,68 @@ with aba_voz:
                 ph_v.info("Gerando nota...")
                 txt_v, _ = gerar_stream(pr, modelo, url_ollama, system_prompt, 0.3, ph_v)
                 ph_v.markdown(txt_v)
+
+# ----------------------------- IMAGEM (MULTIMODAL) -----------------------------
+PROMPTS_IMAGEM = {
+    "Descrever a imagem (geral)": (
+        "Descreva objetivamente o que voce ve nesta imagem, em portugues do Brasil. "
+        "Liste os elementos visiveis e caracteristicas relevantes. Nao especule alem do visivel."
+    ),
+    "Teledermatologia (didatico)": (
+        "EXERCICIO DIDATICO - NAO E DIAGNOSTICO. Descreva as caracteristicas visiveis desta lesao de pele "
+        "(cor, bordas, simetria, tamanho aparente, textura). Depois liste quais informacoes clinicas um "
+        "dermatologista pediria para avaliar este caso em teledermatologia. Responda em portugues."
+    ),
+    "Raio-X / imagem radiologica (didatico)": (
+        "EXERCICIO DIDATICO - NAO E LAUDO. Descreva as estruturas anatomicas visiveis nesta imagem "
+        "radiologica e comente a qualidade tecnica da imagem (posicionamento, penetracao, artefatos). "
+        "NAO conclua diagnostico. Responda em portugues."
+    ),
+    "Escrever meu proprio prompt": "",
+}
+
+with aba_img:
+    st.header("🖼️ Analise de Imagem (multimodal)")
+    st.markdown(
+        "A MedGemma **enxerga**: envie uma imagem e ela descreve o que ve. "
+        "Casos reais em telessaude: teledermatologia, apoio a telerradiologia, triagem de fotos enviadas pelo paciente."
+    )
+    st.error(
+        "🛑 **Exercicio didatico, NUNCA diagnostico.** Nao envie imagem real de paciente - use apenas "
+        "imagens publicas/didaticas. Modelos pequenos erram e alucinam; decisao clinica e sempre do profissional."
+    )
+
+    modelos_visao = [m for m in modelos_instalados if m.startswith("medgemma")]
+    if not modelos_visao:
+        st.warning("Nenhum modelo com visao detectado. Rode no terminal: `ollama pull medgemma:4b` e reinicie o app.")
+    else:
+        col_mi, col_pi = st.columns([1, 2])
+        with col_mi:
+            modelo_visao = st.selectbox("Modelo com visao", modelos_visao, index=0,
+                                        help="As MedGemma tem visao habilitada. A selecao da sidebar nao se aplica aqui.")
+        with col_pi:
+            preset_img = st.selectbox("Tipo de analise", list(PROMPTS_IMAGEM.keys()), index=0)
+
+        prompt_img = st.text_area("Prompt (edite a vontade):", value=PROMPTS_IMAGEM[preset_img],
+                                  height=110, key=f"prompt_img_{preset_img}")
+
+        arquivo_img = st.file_uploader("Imagem (PNG/JPG/WEBP)", type=["png", "jpg", "jpeg", "webp"])
+        if arquivo_img is not None:
+            st.image(arquivo_img, caption=arquivo_img.name, width=360)
+
+            if st.button("👁️ Analisar imagem", type="primary", key="run_img", disabled=not prompt_img.strip()):
+                img_b64 = base64.b64encode(arquivo_img.getvalue()).decode()
+                st.markdown("**Resposta do modelo:**")
+                ph_i = st.empty()
+                ph_i.info("👁️ Analisando a imagem (a 1a vez pode levar ~1 min em CPU)...")
+                # temperatura baixa: descricao factual, nao criativa
+                txt_i, met_i = gerar_stream(prompt_img, modelo_visao, url_ollama, "", 0.2, ph_i, imagens=[img_b64])
+                st.session_state["resp_img"] = {
+                    "prompt": f"[imagem: {arquivo_img.name}] {prompt_img}", "resposta": txt_i,
+                    "modelo": modelo_visao, "system": "", "metricas": met_i,
+                }
+
+        render_resposta("img", "Imagem", preset_img)
 
 # ----------------------------- CHAT / MULTI-TURN -----------------------------
 with aba_chat:

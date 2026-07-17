@@ -61,6 +61,7 @@ hackathon-ia-saude/
 | **📊 Dados** | Usa os CSVs fictícios: classifica risco de no-show, prioriza fila |
 | **📈 Analytics** | Gráficos de quais fatores predizem o no-show (sub-aba em Dados) |
 | **🎙️ Transcrição** | Áudio de consulta → Whisper transcreve → MedGemma vira nota clínica (opcional: `pip install faster-whisper`) |
+| **🖼️ Imagem** | A MedGemma **enxerga**: envie uma imagem (didática, nunca de paciente real) e ela descreve — teledermatologia e raio-x como exercício, **nunca diagnóstico** |
 | **🧮 Autoavaliação** | A IA pontua a própria resposta pela rubrica do hackathon |
 | **🎤 Gerador de pitch** | Monta o esqueleto da apresentação a partir dos resultados salvos |
 | **Métricas** | Mostra tokens/s e tempo a cada resposta |
