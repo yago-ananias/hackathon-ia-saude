@@ -68,7 +68,7 @@ PERSONAS = {
     ),
 }
 
-FALLBACK_MODELOS = ["medgemma:4b", "gemma4:e2b"]
+FALLBACK_MODELOS = ["medgemma:4b", "gemma4:e4b-it-qat"]
 
 # -------------------------------------------------------------------
 # Dados (prompts e desafios)
@@ -105,7 +105,8 @@ def carregar_whisper(tamanho: str = "base"):
 # -------------------------------------------------------------------
 # Integracao com Ollama
 # -------------------------------------------------------------------
-PREFERENCIA = ["medgemma:4b", "gemma4:e2b"]  # recomendados aparecem primeiro
+# recomendados aparecem primeiro; e2b mantidos p/ quem instalou com o guia antigo
+PREFERENCIA = ["medgemma:4b", "gemma4:e4b-it-qat", "gemma4:e2b-it-qat", "gemma4:e2b"]
 
 
 def listar_modelos(url_base: str):

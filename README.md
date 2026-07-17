@@ -92,7 +92,9 @@ streamlit run app_hackathon.py
 | Modelo | Tamanho | Especialidade |
 |---|---|---|
 | 🏥 **MedGemma 4B** | 3.3 GB | Triagem, interconsulta, síntese clínica |
-| 🎯 **Gemma 4 E2B** | 7.2 GB | Produto, UX, jornada do paciente |
+| 🎯 **Gemma 4 E4B QAT** | 6.1 GB | Produto, UX, jornada do paciente |
+
+> 💻 Notebook com 8 GB de RAM? Troque o segundo por `gemma4:e2b-it-qat` (4.3 GB) — mesma família, mais leve.
 
 Ambos rodam **100% local** via Ollama. Zero envio de dados para nuvem.
 

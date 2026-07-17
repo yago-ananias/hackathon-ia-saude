@@ -89,10 +89,12 @@ powershell -ExecutionPolicy Bypass -File setup_hackathon.ps1
 ```
 pip install streamlit requests
 ollama pull medgemma:4b
-ollama pull gemma4:e2b
+ollama pull gemma4:e4b-it-qat
 ```
 
-> ☕ Boa hora pra um café. Vai baixar ~10 GB.
+> 💻 Seu notebook tem 8 GB de RAM? Troque a última linha por `ollama pull gemma4:e2b-it-qat` (4.3 GB, mais leve).
+
+> ☕ Boa hora pra um café. Vai baixar ~9,5 GB.
 
 ---
 
@@ -107,7 +109,7 @@ Vai abrir automaticamente em **http://localhost:8501**.
 
 Na sidebar, clique em **"🔌 Testar Conexão"**. Deve aparecer:
 - ✅ Ollama conectado
-- Lista com `medgemma:4b` e `gemma4:e2b`
+- Lista com `medgemma:4b` e `gemma4:e4b-it-qat` (ou `gemma4:e2b-it-qat`, se escolheu a versão leve)
 
 Agora teste um prompt:
 1. Vá em **"🩺 Equipe TeleEletiva"**

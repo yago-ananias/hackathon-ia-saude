@@ -43,7 +43,7 @@ Funciona bem para 1-5 pessoas que tiveram problema no setup local.
 
 ### Pré-requisitos (já feitos)
 - ✅ Ollama instalado
-- ✅ MedGemma 4B e Gemma 4 E2B baixados
+- ✅ MedGemma 4B e Gemma 4 E4B QAT baixados
 - ✅ Streamlit funcionando em localhost:8501
 
 ### Passo 1: Instalar Cloudflared (5 min)

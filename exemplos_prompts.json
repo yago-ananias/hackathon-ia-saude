@@ -3,17 +3,37 @@
     "modelo_padrao": "medgemma:4b",
     "modelos_disponiveis": {
       "medgemma:4b": "Especializado em saude - melhor para prompts clinicos",
-      "gemma4:e2b": "Gemma 4 mais recente - melhor para produto/negocio"
+      "gemma4:e4b-it-qat": "Gemma 4 E4B QAT - melhor para produto/negocio (6,1 GB; opcao leve: gemma4:e2b-it-qat com 4,3 GB)"
     },
     "idioma": "pt-BR",
     "dominio": "Saude Digital - Operadora de Saude",
     "fonte_unica": "Este arquivo e a FONTE UNICA dos desafios. O desafios_por_trilha.md e gerado a partir daqui por gerar_desafios_md.py - nao editar o .md a mao.",
     "avaliacao": [
-      {"criterio": "Clareza do problema", "peso": "25%", "o_que_avaliar": "O problema esta bem definido? A dor e real?"},
-      {"criterio": "Uso da IA", "peso": "30%", "o_que_avaliar": "A IA realmente ajuda? O prompt foi testado no app?"},
-      {"criterio": "Viabilidade", "peso": "20%", "o_que_avaliar": "E possivel implementar em 6 meses?"},
-      {"criterio": "Impacto", "peso": "15%", "o_que_avaliar": "Qual metrica melhora? Em quanto?"},
-      {"criterio": "Risco assistencial", "peso": "10%", "o_que_avaliar": "O risco foi identificado e mitigado?"}
+      {
+        "criterio": "Clareza do problema",
+        "peso": "25%",
+        "o_que_avaliar": "O problema esta bem definido? A dor e real?"
+      },
+      {
+        "criterio": "Uso da IA",
+        "peso": "30%",
+        "o_que_avaliar": "A IA realmente ajuda? O prompt foi testado no app?"
+      },
+      {
+        "criterio": "Viabilidade",
+        "peso": "20%",
+        "o_que_avaliar": "E possivel implementar em 6 meses?"
+      },
+      {
+        "criterio": "Impacto",
+        "peso": "15%",
+        "o_que_avaliar": "Qual metrica melhora? Em quanto?"
+      },
+      {
+        "criterio": "Risco assistencial",
+        "peso": "10%",
+        "o_que_avaliar": "O risco foi identificado e mitigado?"
+      }
     ],
     "estrutura_pitch": [
       "Problema (2 min) - Qual dor voce resolveu? Qual a magnitude?",
@@ -34,11 +54,27 @@
           "id": "TE-01",
           "titulo": "Reduzir No-Show com IA",
           "problema": "30% dos pacientes agendados nao comparecem a teleconsulta eletiva, gerando ociosidade medica e perda de acesso para outros pacientes.",
-          "metricas_alvo": ["taxa de no-show", "taxa de reagendamento", "tempo ocioso medico"],
+          "metricas_alvo": [
+            "taxa de no-show",
+            "taxa de reagendamento",
+            "tempo ocioso medico"
+          ],
           "metricas_detalhe": [
-            {"metrica": "Taxa de no-show", "hoje": "30%", "meta": "< 15%"},
-            {"metrica": "Taxa de reagendamento", "hoje": "10%", "meta": "> 25%"},
-            {"metrica": "Tempo ocioso medico/dia", "hoje": "1,5h", "meta": "< 30min"}
+            {
+              "metrica": "Taxa de no-show",
+              "hoje": "30%",
+              "meta": "< 15%"
+            },
+            {
+              "metrica": "Taxa de reagendamento",
+              "hoje": "10%",
+              "meta": "> 25%"
+            },
+            {
+              "metrica": "Tempo ocioso medico/dia",
+              "hoje": "1,5h",
+              "meta": "< 30min"
+            }
           ],
           "perguntas_guia": [
             "Quais fatores mais influenciam o nao comparecimento?",
@@ -65,11 +101,27 @@
           "id": "TE-02",
           "titulo": "Triagem Inteligente de Sintomas",
           "problema": "Pacientes sao direcionados ao especialista errado em 25% dos casos, gerando reencaminhamento, atraso no cuidado e desperdicio de consulta.",
-          "metricas_alvo": ["taxa de encaminhamento incorreto", "tempo ate consulta correta", "taxa de resolucao na primeira consulta"],
+          "metricas_alvo": [
+            "taxa de encaminhamento incorreto",
+            "tempo ate consulta correta",
+            "taxa de resolucao na primeira consulta"
+          ],
           "metricas_detalhe": [
-            {"metrica": "Taxa de encaminhamento incorreto", "hoje": "25%", "meta": "< 8%"},
-            {"metrica": "Tempo ate consulta correta", "hoje": "12 dias", "meta": "< 5 dias"},
-            {"metrica": "Taxa de resolucao na 1a consulta", "hoje": "60%", "meta": "> 80%"}
+            {
+              "metrica": "Taxa de encaminhamento incorreto",
+              "hoje": "25%",
+              "meta": "< 8%"
+            },
+            {
+              "metrica": "Tempo ate consulta correta",
+              "hoje": "12 dias",
+              "meta": "< 5 dias"
+            },
+            {
+              "metrica": "Taxa de resolucao na 1a consulta",
+              "hoje": "60%",
+              "meta": "> 80%"
+            }
           ],
           "perguntas_guia": [
             "Como a IA pode entender a queixa principal e sugerir o especialista correto?",
@@ -91,7 +143,11 @@
           "id": "TE-03",
           "titulo": "Plano de Cuidado Pos-Consulta com IA",
           "problema": "40% dos pacientes nao seguem as orientacoes pos-teleconsulta por falta de clareza ou esquecimento, gerando reconsulta desnecessaria em curto prazo.",
-          "metricas_alvo": ["taxa de adesao ao cuidado", "taxa de reconsulta em 30 dias", "satisfacao do paciente"],
+          "metricas_alvo": [
+            "taxa de adesao ao cuidado",
+            "taxa de reconsulta em 30 dias",
+            "satisfacao do paciente"
+          ],
           "metricas_detalhe": [],
           "perguntas_guia": [
             "Como transformar o resumo medico em linguagem acessivel ao paciente?",
@@ -120,11 +176,27 @@
           "id": "TI-01",
           "titulo": "Estruturar Pedido de Interconsulta com IA",
           "problema": "70% dos pedidos de interconsulta chegam ao especialista com informacoes incompletas, gerando resposta inadequada ou necessidade de contato adicional para esclarecimentos.",
-          "metricas_alvo": ["completude do pedido", "tempo de resposta do especialista", "taxa de retrabalho"],
+          "metricas_alvo": [
+            "completude do pedido",
+            "tempo de resposta do especialista",
+            "taxa de retrabalho"
+          ],
           "metricas_detalhe": [
-            {"metrica": "Completude do pedido", "hoje": "30%", "meta": "> 85%"},
-            {"metrica": "Tempo de resposta do especialista", "hoje": "48h", "meta": "< 12h"},
-            {"metrica": "Taxa de retrabalho por info incompleta", "hoje": "40%", "meta": "< 10%"}
+            {
+              "metrica": "Completude do pedido",
+              "hoje": "30%",
+              "meta": "> 85%"
+            },
+            {
+              "metrica": "Tempo de resposta do especialista",
+              "hoje": "48h",
+              "meta": "< 12h"
+            },
+            {
+              "metrica": "Taxa de retrabalho por info incompleta",
+              "hoje": "40%",
+              "meta": "< 10%"
+            }
           ],
           "perguntas_guia": [
             "Quais informacoes sao essenciais para cada especialidade?",
@@ -150,11 +222,27 @@
           "id": "TI-02",
           "titulo": "Priorizar Casos por Urgencia com IA",
           "problema": "Especialistas recebem filas de 20-50 pedidos diarios sem criterio claro de priorizacao, respondendo por ordem de chegada mesmo quando ha casos criticos aguardando.",
-          "metricas_alvo": ["tempo de resposta em casos criticos", "taxa de priorizacao correta", "satisfacao do generalista"],
+          "metricas_alvo": [
+            "tempo de resposta em casos criticos",
+            "taxa de priorizacao correta",
+            "satisfacao do generalista"
+          ],
           "metricas_detalhe": [
-            {"metrica": "Tempo de resposta casos criticos", "hoje": "48h", "meta": "< 2h"},
-            {"metrica": "Taxa de priorizacao correta", "hoje": "45%", "meta": "> 90%"},
-            {"metrica": "Satisfacao do medico generalista", "hoje": "NPS 20", "meta": "NPS 50+"}
+            {
+              "metrica": "Tempo de resposta casos criticos",
+              "hoje": "48h",
+              "meta": "< 2h"
+            },
+            {
+              "metrica": "Taxa de priorizacao correta",
+              "hoje": "45%",
+              "meta": "> 90%"
+            },
+            {
+              "metrica": "Satisfacao do medico generalista",
+              "hoje": "NPS 20",
+              "meta": "NPS 50+"
+            }
           ],
           "perguntas_guia": [
             "Como a IA pode classificar urgencia clinica sem ver o paciente?",
@@ -177,7 +265,11 @@
           "id": "TI-03",
           "titulo": "Sintese Clinica para Resposta Mais Rapida",
           "problema": "Especialistas levam em media 20 minutos para ler, interpretar e responder uma interconsulta por falta de resumo estruturado, reduzindo capacidade de resposta diaria.",
-          "metricas_alvo": ["tempo medio de resposta", "volume de interconsultas respondidas/dia", "qualidade percebida da resposta"],
+          "metricas_alvo": [
+            "tempo medio de resposta",
+            "volume de interconsultas respondidas/dia",
+            "qualidade percebida da resposta"
+          ],
           "metricas_detalhe": [],
           "perguntas_guia": [
             "Como a IA pode pre-processar o pedido para o especialista?",

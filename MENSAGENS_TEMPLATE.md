@@ -104,7 +104,7 @@ Pra confirmar que está tudo OK:
 
 1. Abra o terminal
 2. Rode: ollama list
-3. Deve aparecer: medgemma:4b E gemma4:e2b
+3. Deve aparecer: medgemma:4b E gemma4:e4b-it-qat (ou e2b-it-qat, versao leve)
 
 4. Na pasta hackathon-ia-saude, rode: streamlit run app_hackathon.py
 5. Deve abrir o navegador em localhost:8501

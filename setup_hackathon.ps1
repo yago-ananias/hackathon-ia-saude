@@ -50,16 +50,19 @@ if (-not $ollamaPath) {
 # --- 4. Baixar modelos ---
 Write-Host ""
 Write-Host "[4/5] Baixando modelos para o hackathon..." -ForegroundColor Yellow
-Write-Host "Total aproximado: 10 GB. Pode demorar 10-20 min na 1a vez." -ForegroundColor Gray
+Write-Host "Total aproximado: 9.5 GB. Pode demorar 10-20 min na 1a vez." -ForegroundColor Gray
 Write-Host ""
 
 Write-Host "  - MedGemma 4B (3.3 GB) - especializado em saude..." -ForegroundColor Cyan
 ollama pull medgemma:4b
 if ($LASTEXITCODE -eq 0) { Write-Host "    OK: medgemma:4b pronto" -ForegroundColor Green }
 
-Write-Host "  - Gemma 4 E2B (7.2 GB) - modelo mais recente..." -ForegroundColor Cyan
-ollama pull gemma4:e2b
-if ($LASTEXITCODE -eq 0) { Write-Host "    OK: gemma4:e2b pronto" -ForegroundColor Green }
+Write-Host "  - Gemma 4 E4B QAT (6.1 GB) - produto/negocio..." -ForegroundColor Cyan
+ollama pull gemma4:e4b-it-qat
+if ($LASTEXITCODE -eq 0) { Write-Host "    OK: gemma4:e4b-it-qat pronto" -ForegroundColor Green }
+Write-Host ""
+Write-Host "  DICA: notebook com 8 GB de RAM? Use a versao leve no lugar:" -ForegroundColor Gray
+Write-Host "    ollama pull gemma4:e2b-it-qat   (4.3 GB)" -ForegroundColor Gray
 
 # --- 5. Testar modelo ---
 Write-Host ""
