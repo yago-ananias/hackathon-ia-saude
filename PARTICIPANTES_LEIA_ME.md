@@ -11,7 +11,7 @@
 |---|---|---|
 | **Python 3.10+** | Roda a interface do app | 5 min |
 | **Ollama** | Motor que roda a IA localmente | 5 min |
-| **2 modelos de IA** | MedGemma + Gemma 4 (10 GB) | 15 min |
+| **2 modelos de IA** | MedGemma + Gemma 4 (9,5 GB) | 15 min |
 
 **Total:** ~30 min (depende da sua internet)
 
@@ -25,7 +25,7 @@ Antes de começar, garanta que você tem:
 - ☐ **15 GB livres** em disco
 - ☐ **8 GB de RAM** mínimo (16 GB recomendado)
 - ☐ **Permissão de administrador** para instalar programas
-- ☐ **Conexão estável** para baixar ~10 GB
+- ☐ **Conexão estável** para baixar ~9,5 GB
 
 ---
 

@@ -27,12 +27,12 @@ https://github.com/yago-ananias/hackathon-ia-saude/blob/main/PARTICIPANTES_LEIA_
 O que você vai instalar:
 ✅ Python 3.10+ (5 min)
 ✅ Ollama (motor de IA - 5 min)
-✅ 2 modelos de IA (~10 GB de download - 15 min)
+✅ 2 modelos de IA (~9,5 GB de download - 15 min)
 ✅ App do hackathon (1 min)
 
 ⚠️ IMPORTANTE:
 - Faça isso até [DATA D-3]
-- Reserve 30 min em rede boa (10 GB de download)
+- Reserve 30 min em rede boa (9,5 GB de download)
 - Se travar, me chama AQUI no grupo
 
 Quem tiver tudo pronto até [DATA D-3], reage com ✅ aqui.

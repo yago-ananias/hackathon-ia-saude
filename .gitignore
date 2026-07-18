@@ -1,6 +1,6 @@
 # Outputs do hackathon (resultados das equipes)
+# obs: nao usar *.txt global - ignoraria requirements.txt e docs futuros
 output/
-*.txt
 
 # Python
 __pycache__/
